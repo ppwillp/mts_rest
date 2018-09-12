@@ -1,0 +1,22 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/execute">
+  <div class = "form-group">
+    <label for="json">Execute Payment</label>
+    <textarea id = "textArea" class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+        "payer_id": "{{payerID}}"
+  }
+    </textarea>
+  </div>
+  <input type = "hidden" name = "paymentID" value = "{{paymentID}}">
+  <input type = "submit">
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+</div>
+</div>
+

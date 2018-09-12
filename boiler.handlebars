@@ -1,0 +1,17 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/create">
+  <div class = "form-group">
+    <label for="json">Create Payment</label>
+    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200"></textarea>
+  </div>
+  <input type = "submit">
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}</textarea>
+</div>
+</div>

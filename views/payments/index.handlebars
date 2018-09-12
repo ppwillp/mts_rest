@@ -1,0 +1,71 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/create">
+  <div class = "form-group">
+    <label for="json">Create Payment</label>
+    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+        "intent": "sale",
+        "payer": {
+        "payment_method": "paypal"
+    },
+    "redirect_urls": {
+        "return_url": "http://localhost:5000/payments/execute",
+        "cancel_url": "http://localhost:5000/payments/create"
+    },
+    "transactions": [{
+        "item_list": {
+            "items": [{
+                "name": "item",
+                "sku": "item",
+                "price": "1.00",
+                "currency": "USD",
+                "quantity": 1
+            }]
+        },
+        "amount": {
+            "currency": "USD",
+            "total": "1.00"
+        },
+        "description": "This is the payment description."
+    }]
+  }</textarea>
+  </div>
+  <input type = "submit">
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+</div>
+</div>
+
+<div class = "row">
+  <div class = "col-md-4 offset-md-8">
+    <div>
+      <h3><span id = "info"></span></h3>
+    </div>
+  </div>
+</div>
+<div class = "row">
+  <br>
+  <h3><span id = "info2"></span></h3>
+</div>
+
+<script>
+var url = "{{{link}}}";
+console.log(url);
+
+function addLink() {
+    if(url != "") {
+        var place = document.getElementById("info");
+        var a = document.createElement('a');
+        a.href = url;
+        a.innerHTML = "Redirect to PayPal";
+        place.appendChild(a);
+    }
+}
+addLink();
+
+</script>
