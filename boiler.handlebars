@@ -7,11 +7,11 @@
     <label for="json">Create Payment</label>
     <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200"></textarea>
   </div>
-  <input type = "submit">
+  <button type = "submit" class = "btn btn-primary">Submit</button>
   </form>
 </div>
 <div class = "col-md-6">
   <label for="response">Response</label>
-<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}</textarea>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
 </div>
 </div>

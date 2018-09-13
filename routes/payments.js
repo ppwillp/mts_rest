@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const paypal = require('paypal-rest-sdk');
+const passport = require('passport');
 
-router.get('/', (req, res) => {
+//load Authentication Helper
+const {ensureAuthenticated} = require('../helpers/auth');
+
+router.get('/', ensureAuthenticated, (req, res) => {
   const title = "Create Payment";
   const endpoint = "/v1/payments/payment";
   res.render('payments/index', {
@@ -13,7 +17,17 @@ router.get('/', (req, res) => {
 
 //create payment
 
-router.post('/create', (req, res, next) => {
+router.post('/create', ensureAuthenticated, (req, res, next) => {
+
+  /* const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+  console.log(client_id);
+  paypal.configure({
+    'mode': 'sandbox',
+    'client_id': client_id,
+    'client_secret': client_secret
+  });*/
+
   const title = "Create Payment";
   const endpoint = "/v1/payments/payment";
   const create_payment_json = req.body.json;
@@ -54,7 +68,15 @@ router.post('/create', (req, res, next) => {
 
   //after leaving PayPal, load this page
 
-router.get('/execute', (req, res) => {
+router.get('/execute', ensureAuthenticated, (req, res) => {
+  /* const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+  console.log(client_id);
+  paypal.configure({
+    'mode': 'sandbox',
+    'client_id': client_id,
+    'client_secret': client_secret
+  });*/
   const title = "Execute Payment";
   const endpoint = "/v1/payments/payment/{payment_id}/execute";
   const payerID = req.query.PayerID;
@@ -73,7 +95,16 @@ router.get('/execute', (req, res) => {
 
 //call to execute payment
 
-router.post('/execute', (req, res, next) => {
+router.post('/execute', ensureAuthenticated, (req, res, next) => {
+ /* const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+  console.log(client_id);
+  paypal.configure({
+    'mode': 'sandbox',
+    'client_id': client_id,
+    'client_secret': client_secret
+  });*/
+
   const title = "Execute Payment";
   const endpoint = "/v1/payments/payment/{payment_id}/execute";
   const paymentID = req.body.paymentID;
