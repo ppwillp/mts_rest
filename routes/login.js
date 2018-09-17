@@ -8,7 +8,6 @@ const mongoose = require('mongoose');
 require('../models/User');
 const User = mongoose.model('users');
 
-
 //user login route
 router.get('/login', (req, res) => {
 const title = "Login";

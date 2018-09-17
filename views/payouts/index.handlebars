@@ -1,0 +1,68 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payouts/create">
+  <div class = "form-group">
+    <label for="json">Create Payout</label>
+    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+    "sender_batch_header": {
+        "sender_batch_id": "{{sender_batch_id}}",
+        "email_subject": "You have a payment"
+    },
+    "items": [
+        {
+            "recipient_type": "EMAIL",
+            "amount": {
+                "value": "1.00",
+                "currency": "USD"
+            },
+            "receiver": "test@mail.com",
+            "note": "Thank you.",
+            "sender_item_id": "item_1"
+        },
+        {
+            "recipient_type": "EMAIL",
+            "amount": {
+                "value": "1.00",
+                "currency": "USD"
+            },
+            "receiver": "test2@mail.com",
+            "note": "Thank you.",
+            "sender_item_id": "item_2"
+        },
+        {
+            "recipient_type": "EMAIL",
+            "amount": {
+                "value": "1.00",
+                "currency": "USD"
+            },
+            "receiver": "test3@mail.com",
+            "note": "Thank you.",
+            "sender_item_id": "item_3"
+        }
+    ]
+}</textarea>
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+</div>
+</div>
+
+<div class = "row">
+  <div class = "col-md-6 offset-md-6">
+    <h3>Get Payout Details</h3>
+    <form method = "POST" action = "/payouts/getPayoutDetails">
+  <div class="input-group mb-3">
+  <input type="text" class="form-control" name = "id" value = "{{payout_batch_id}}">
+  <div class="input-group-append">
+    <button class="btn btn-success" type="submit">/v1/payments/payout/{{payout_batch_id}}</button>
+  </div>
+</div>
+</form>
+</div>
+</div>

@@ -6,7 +6,27 @@ const passport = require('passport');
 //load Authentication Helper
 const {ensureAuthenticated} = require('../helpers/auth');
 
-router.get('/', ensureAuthenticated, (req, res) => {
+/* 
+****************************************************************************************************************
+ADD ensureAuthenticated TO ALL ROUTES
+**********************************************************************************************
+
+*/
+
+/*function getCreds(req) {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  paypal.configure({
+    'mode': 'sandbox',
+    'client_id': client_id,
+    'client_secret': client_secret
+  });
+
+  return paypal;
+}*/
+
+router.get('/', (req, res) => {
   const title = "Create Payment";
   const endpoint = "/v1/payments/payment";
   res.render('payments/index', {
@@ -17,8 +37,8 @@ router.get('/', ensureAuthenticated, (req, res) => {
 
 //create payment
 
-router.post('/create', ensureAuthenticated, (req, res, next) => {
-
+router.post('/create', (req, res, next) => {
+  //getCreds(req);
   /* const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
   console.log(client_id);
@@ -68,7 +88,7 @@ router.post('/create', ensureAuthenticated, (req, res, next) => {
 
   //after leaving PayPal, load this page
 
-router.get('/execute', ensureAuthenticated, (req, res) => {
+router.get('/execute', (req, res) => {
   /* const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
   console.log(client_id);
@@ -95,7 +115,7 @@ router.get('/execute', ensureAuthenticated, (req, res) => {
 
 //call to execute payment
 
-router.post('/execute', ensureAuthenticated, (req, res, next) => {
+router.post('/execute', (req, res, next) => {
  /* const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
   console.log(client_id);
@@ -114,7 +134,7 @@ router.post('/execute', ensureAuthenticated, (req, res, next) => {
 
   paypal.payment.execute(paymentID, execute_payment_json, function(error, payment) {
     if(error) {
-       errorResponse = JSON.stringify(error);
+       errorResponse = JSON.stringify(error, null, 2);
       console.log(error);
       res.render('payments/execute', {
         error: error,

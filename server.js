@@ -15,6 +15,8 @@ const router = express.Router();
 //LOAD ROUTES
 const payments = require('./routes/payments');
 const login = require('./routes/login');
+const checkout = require('./routes/checkout');
+const payouts = require('./routes/payouts');
 
 //Passport config
 require('./config/passport')(passport);
@@ -106,6 +108,8 @@ res.render('about', {
 //USE ROUTES
 app.use('/payments', payments);
 app.use('/login', login);
+app.use('/checkout', checkout);
+app.use('/payouts', payouts);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
