@@ -1,0 +1,195 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-3">
+    <a href = "https://developer.paypal.com/docs/integration/direct/sync/#prerequisites" target="blank"><h3>Prerequisites</h3></a>
+
+  </div>
+</div>
+<br><br>
+
+<div class = "row">
+  <h2>Add values to URL</h2>
+</div>
+<div class = "card card-body">
+  <form action="#" id = "stringBuilder">
+    <div class = "row">
+    
+      <div class = "col-md-4 form-group">
+      <label for="transactionID" class = "control-label">transaction_id</label>
+      <input type = "text" class = "form-control" id = "transactionID" name = "transactionID">
+    </div>
+    <div class = "col-md-4 form-group">
+     
+      <label for="Transaction Type" class = "control-label">transaction_type</label>
+      <input type = "text" class = "form-control" id = "transactionType" name = "transactionType" placeholder="EX T001">
+    </div>
+    <div class = "col-md-4 form-group">
+      <label for="transactionStatus" class = "control-label">transaction_status</label>
+      <input type = "text" class = "form-control" id = "transactionStatus" name = "transactionStatus">
+    </div>
+    </div>
+    
+    <div class = "row">
+      <div class = "col-md-2 form-group">
+        <label for="transactionAmountMin" class = "control-label">transaction_amount (start_range)</label>
+        <input type = "text" class = "form-control" id = "transactionAmountMin" name = "transactionAmountMin" placeholder="100, 400, etc">
+      </div>
+      <div class = "col-md-2 form-group">
+        <label for="transactionAmountMax" class = "control-label">transaction_amount (end_range)</label>
+        <input type = "text" class = "form-control" id = "transactionAmountMax" name = "transactionAmountMax" placeholder="no decimals">
+      </div>
+      <div class = "col-md-4 form-group">
+        <label for="transactionCurrency" class = "control-label">transaction_currency</label>
+        <input type = "text" class = "form-control mb-2" id = "transactionCurrency" name = "transactionCurrency" placeholder="USD">
+      </div>
+      <div class = "col-md-4 form-group">
+        <label for="paymentInstrumentType" class = "control-label">payment_instrument_type</label>
+        <input type = "text" class = "form-control" id = "paymentInstrumentType" name = "paymentInstrumentType">
+      </div> 
+    </div>
+
+    <div class = "row">
+      <div class = "col-md-2 form-group">
+        <label for="storeId" class = "control-label">store_id</label>
+        <input type = "text" class = "form-control" id = "storeId" name = "storeId">
+      </div>
+      <div class = "col-md-2 form-group">
+        <label for="terminalId" class = "control-label">terminal_id</label>
+        <input type = "text" class = "form-control" id = "terminalId" name = "terminalId">
+      </div>
+      <div class = "col-md-4 form-group">
+        <label for="fields" class = "control-label">fields</label>
+        <input type = "text" class = "form-control" name = "fields" id = "fields" placeholder="default=transaction_info ">
+      </div>
+      <div class = "col-md-4 form-group">
+        <label for="balanceAffectingRecordsOnly" class = "control-label">balance_affecting_records_only</label>
+        <input type = "text" class = "form-control" name = "balanceAffectingRecordsOnly" id = "balanceAffectingRecordsOnly" placeholder="default=Y">
+      </div>
+    </div>
+
+    <div class = "row">
+      <div class = "col-md-2 form-group">
+        <label for="pageSize" class = "control-label">page_size</label>
+        <input type = "text" class = "form-control" name = "pageSize" id = "pageSize" placeholder="default=100">
+      </div> 
+      <div class = "col-md-2 form-group">
+        <label for="page" class = "control-label">page</label>
+        <input type = "text" class = "form-control" name = "page" id = "page" placeholder="default=1">
+      </div>
+    </div>
+
+    <div class = "row">
+      <div class = "col-md-4">
+    <button type = "submit" class = "btn btn-primary">Build query string</button>
+    </div>
+    </div>
+    </form>
+</div>
+
+<pre id = "result"></pre>
+<pre id = "result2"></pre>
+
+
+<div class = "row">
+  <div class = "col-md-12">
+    <form method = "POST" action = "/sync/transactions">
+      <input type = "text" class = "col-md-12" name = "queryString" id = "queryStringURL" value = "">
+      <button type = "submit" class = "btn btn-success">GET</button>
+    </form>
+  </div>
+</div>
+<br>
+<br>
+<br>
+
+
+    <script type = "text/javascript">
+
+     var date1 = new Date();
+     date1.setDate(date1.getDate() - 30);
+     date1 = date1.toISOString();
+     
+     var date2 = new Date();
+     
+     date2 = date2.toISOString();
+     /*
+     var queryString = "/v1/reporting/transactions";
+     queryString = queryString + "?start_date=" + date1 + "&end_date=" + date2;
+     */
+     var queryStringURL = document.getElementById('queryStringURL');
+     
+
+     
+
+     $.fn.serializeObject = function() {
+       var o = {};
+       var a = this.serializeArray();
+       $.each(a, function() {
+         if(o[this.name] !== undefined && o[this.name] !== '') {
+           if(!o[this.name].push) {
+             o[this.name] = [o[this.name]];
+           }
+           o[this.name].push(this.value || '');// || ''
+         } else {
+           o[this.name] = this.value || '';
+         }
+       });
+       return o;
+     };
+
+     $(function($) {
+       $(document).ready(function() {
+       $('#stringBuilder').submit(function(e) {
+         queryString = "/v1/reporting/transactions";
+         queryString = queryString + "?start_date=" + date1 + "&end_date=" + date2;
+         e.preventDefault();
+         var obj = $(this).serializeObject();
+         console.log(obj);
+         if(obj.hasOwnProperty('transactionID') && typeof obj['transactionID'] === 'string' && obj['transactionID'].length) {  
+           queryString = queryString + "&transaction_id=" + obj.transactionID;
+         } 
+         if(obj.hasOwnProperty('transactionType') && typeof obj['transactionType'] === 'string' && obj['transactionType'].length) {
+           queryString = queryString + "&transaction_type=" + obj.transactionType;
+         }
+         if(obj.hasOwnProperty('transactionStatus') && typeof obj['transactionStatus'] === 'string' && obj['transactionStatus'].length) {
+           queryString = queryString + "&transaction_status=" + obj.transactionStatus;
+         }
+         if(obj.hasOwnProperty('transactionAmountMin') && typeof obj['transactionAmountMin'] === 'string' && obj['transactionAmountMin'].length) {
+           queryString = queryString + "&transaction_amount_min=" + obj.transactionAmountMin;
+         }
+         if(obj.hasOwnProperty('transactionAmountMax') && typeof obj['transactionAmountMax'] === 'string' && obj['transactionAmountMax'].length) {
+           queryString = queryString + "&transaction_amount_max=" + obj.transactionAmountMax;
+         }
+         if(obj.hasOwnProperty('transactionCurrency') && typeof obj['transactionCurrency'] === 'string' && obj['transactionCurrency'].length) {
+           queryString = queryString + "&transaction_currency=" + obj.transactionCurrency;
+         }
+         if(obj.hasOwnProperty('paymentInstrumentType') && typeof obj['paymentInstrumentType'] === 'string' && obj['paymentInstrumentType'].length) {
+           queryString = queryString + "&payment_instrument_type=" + obj.paymentInstrumentType;
+         }
+         if(obj.hasOwnProperty('storeId') && typeof obj['storeId'] === 'string' && obj['storeId'].length) {
+           queryString = queryString + "&store_id=" + obj.storeId;
+         }
+         if(obj.hasOwnProperty('terminalId') && typeof obj['terminalId'] === 'string' && obj['terminalId'].length) {
+           queryString = queryString + "&terminal_id=" + obj.terminalId;
+         }
+         if(obj.hasOwnProperty('fields') && typeof obj['fields'] === 'string' && obj['fields'].length) {
+           queryString = queryString + "&fields=" + obj.fields;
+         }
+         if(obj.hasOwnProperty('balanceAffectingRecordsOnly') && typeof obj['balanceAffectingRecordsOnly'] === 'string' && obj['balanceAffectingRecordsOnly'].length) {
+           queryString = queryString + "&balance_affecting_records_only=" + obj.balanceAffectingRecordsOnly;
+         }
+         if(obj.hasOwnProperty('pageSize') && typeof obj['pageSize'] === 'string' && obj['pageSize'].length) {
+           queryString = queryString + "&page_size=" + obj.pageSize;
+         }
+         if(obj.hasOwnProperty('page') && typeof obj['page'] === 'string' && obj['page'].length) {
+           queryString = queryString + "&page=" + obj.page;
+         }
+         queryStringURL.value = queryString;
+         console.log(queryString);
+       });
+       });
+     });
+
+
+    </script>

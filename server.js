@@ -8,6 +8,8 @@ const exphbs = require('express-handlebars');
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
+const request = require('request-promise');
+
 
 //Routing
 const router = express.Router();
@@ -17,6 +19,7 @@ const payments = require('./routes/payments');
 const login = require('./routes/login');
 const checkout = require('./routes/checkout');
 const payouts = require('./routes/payouts');
+const sync = require('./routes/sync');
 
 //Passport config
 require('./config/passport')(passport);
@@ -110,6 +113,7 @@ app.use('/payments', payments);
 app.use('/login', login);
 app.use('/checkout', checkout);
 app.use('/payouts', payouts);
+app.use('/sync', sync);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
