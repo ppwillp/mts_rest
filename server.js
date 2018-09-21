@@ -20,6 +20,7 @@ const login = require('./routes/login');
 const checkout = require('./routes/checkout');
 const payouts = require('./routes/payouts');
 const sync = require('./routes/sync');
+const subscriptions = require('./routes/subscriptions');
 
 //Passport config
 require('./config/passport')(passport);
@@ -114,6 +115,7 @@ app.use('/login', login);
 app.use('/checkout', checkout);
 app.use('/payouts', payouts);
 app.use('/sync', sync);
+app.use('/subscriptions', subscriptions);
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

@@ -1,0 +1,23 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/subscriptions/list">
+  <div class = "form-group">
+    <label for="json">List billing plans</label>
+    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+    "status": "ACTIVE",
+    "page_size": "5",
+    "page": "1",
+    "total_required": "yes"
+}</textarea>
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+</div>
+</div>
+<br><br>
