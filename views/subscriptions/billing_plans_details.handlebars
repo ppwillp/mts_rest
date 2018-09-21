@@ -7,8 +7,8 @@
     <label for="json">List billing plans</label>
     <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
     "status": "ACTIVE",
-    "page_size": "5",
-    "page": "1",
+    "page_size": 5,
+    "page": 1,
     "total_required": "yes"
 }</textarea>
   </div>
@@ -21,3 +21,26 @@
 </div>
 </div>
 <br><br>
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/subscriptions/planDetails">
+  <div class = "form-group">
+    <label for="billingPlanId">Show Billing Plan Details</label>
+    <input type = "text" class = "form-control rounded-0" name = "billingPlanId" id = "billingPlanId" value = "">
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{planInfo}}{{errorResponse2}}</textarea>
+</div>
+</div>
+
+<br><br>
+<div class = "row">
+  <div class = 'col-md-4 offset-md-8'>
+    <a href = "/subscriptions"><h3>Back to Subscriptions</h3></a>
+  </div>
+</div>

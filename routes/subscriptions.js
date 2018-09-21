@@ -85,9 +85,11 @@ router.get('/billing_plans_details', (req, res) => {
 //list billing plans
 router.post('/list', (req, res, next) => {
   
-  const list_billing_plan = req.body.json;
+  let list_billing_plan = req.body.json;
+  console.log(list_billing_plan);
+  list_billing_plan = JSON.parse(list_billing_plan);
   
-  paypal.billingPlan.list(list_billing_plan, function(error, bililngPlan) {
+  paypal.billingPlan.list(list_billing_plan, function(error, billingPlan) {
     if(error) {
       let errorResponse = JSON.stringify(error, null, 2);
       res.render('subscriptions/billing_plans_details', {
@@ -102,6 +104,29 @@ router.post('/list', (req, res, next) => {
         title: "List and Show Billing Plan Details",
         endpoint: "/v1/payments/billing-plans/{plan_id}",
         paymentInfo: paymentInfo 
+      });
+    }
+  });
+});
+
+//Billing Plan Details
+router.post('/planDetails', (req, res, next) => {
+  const billingPlanId = req.body.billingPlanId;
+  paypal.billingPlan.get(billingPlanId, function(error, billingPlan) {
+    if(error) {
+      let errorResponse2 = JSON.stringify(error, null, 2);
+      res.render('subscriptions/billing_plans_details', {
+        title: "List and Show Billing Plan Details",
+        endpoint: "/v1/payments/billing-plans/{plan_id}",
+        error: error,
+        errorResponse2: errorResponse2 
+      });
+    } else {
+      let planInfo = JSON.stringify(billingPlan, null, 2);
+      res.render('subscriptions/billing_plans_details', {
+        title: "List and Show Billing Plan Details",
+        endpoint: "/v1/payments/billing-plans/{plan_id}",
+        planInfo: planInfo 
       });
     }
   });
