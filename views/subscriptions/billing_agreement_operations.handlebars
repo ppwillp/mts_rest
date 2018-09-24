@@ -1,0 +1,56 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/subscriptions/updateBA">
+  <div class = "form-group">
+    <label for="json">Update Agreement</label>
+    <input type = "text" name = "billingAgreementId" class = "form-control rounded-0" placeholder="enter Billing Agreement ID">
+    <br>
+    <textarea class = "form-control rounded-0" name = "json" id = "json" rows = "30" cols="200"></textarea>
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{updateInfo}}{{updateErrorResponse}}</textarea>
+</div>
+</div>
+<br><br>
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/subscriptions/getBADetails">
+  <div class = "form-group">
+    <label for="json">Show Agreement Details</label>
+    <input type = "text" name = "billingAgreementId" class = "form-control rounded-0" placeholder="enter Billing Agreement ID">
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{agreementDetails}}{{detailsErrorResponse}}</textarea>
+</div>
+</div>
+<br><br>
+
+<script>
+  var textArea = document.getElementById('json');
+
+  var jsonString = '[{"op": "replace","path": "/","value": {"description": "Updated description.","start_date": "","shipping_address": {"line1": "Hotel Blue Diamond","line2":"Church Street","city": "San Jose","state": "CA","postal_code": "95112","country_code": "US"}}}]';
+
+  function setTextArea(jsonString) {
+    var date = new Date();
+    date.setHours(date.getHours() + 1);
+    date.toISOString();
+
+    var jsonObj = JSON.parse(jsonString);
+    jsonObj[0].value.start_date = date;
+    var newString = JSON.stringify(jsonObj, null, 2);
+    textArea.value = newString;
+  }
+
+  setTextArea(jsonString);
+</script>

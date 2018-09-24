@@ -1,0 +1,159 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-8">
+      <h3>Dispute ID: {{disputeInfo.dispute_id}}</h3>
+  </div>
+  <div class = "col-md-4">
+    <div class = "card card-body">
+      <ul>
+        <li>Created: {{disputeInfo.create_time}}</li>
+        <li>Updated: {{disputeInfo.update_time}}</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class = "row">
+  <div class = "col-md-6">
+    <div class = "card card-body">
+      <h4>Transactions:</h4>
+        <ul>
+          {{#each disputeInfo.disputed_transactions}}
+          <li>ID: {{seller_transaction_id}}</li>
+          <li>Status: {{transaction_status}}</li>
+          <li>Amount: {{gross_amount.value}}</li>
+          <li>Item: {{items.item_id}}</li>
+          <li>SPP: {{seller_protection_eligible}}</li>
+          {{/each}}
+        </ul>
+    </div>
+  </div>
+  <div class = "col-md-6">
+    <div class = "card card-body">
+      <h4>Dispute Info:</h4>
+      <ul>
+        <li>Reason: {{disputeInfo.reason}}</li>
+        <li>Status: {{disputeInfo.status}}</li>
+        <li>Amount: {{disputeInfo.dispute_amount.value}} {{disputeInfo.dispute_amount.currency_code}}</li>
+        <li>Stage: {{disputeInfo.dispute_life_cycle_stage}}</li>
+        <li>Channel: {{disputeInfo.dispute_channel}}</li>
+      </ul>
+    </div>
+  </div>
+  </div>
+  <div class = "row">
+    <div class = "col-md-12">
+    <div class = "card card-body">
+      <h4>Messages:</h4>
+      {{#each disputeInfo.messages}}
+      <ul>
+        <li>Posted By: {{posted_by}}</li>
+        <li>Time Posted: {{time_posted}}</li>
+        <li>Content: {{content}}</li>
+      </ul>
+      {{/each}}
+    </div>
+    </div>
+  </div>
+  <div class = "row">
+    <div class = "col-md-12">
+      <div class = "card card-body">
+        <h4>Offers:</h4>
+        {{#if disputeInfo.offer.buyer_requested_amount}}
+        <p>From buyer...</p>
+        <ul>
+          <li>Amount: {{disputeInfo.offer.buyer_requested_amount.value}} {{disputeInfo.offer.buyer_requested_amount.currency_code}}</li>
+        </ul>
+        {{else}}
+        <p>No pending offer from buyer...</p>
+        {{/if}}
+        {{#if disputeInfo.offer.seller_offered_amount}}
+        <p>From seller...</p>
+        <ul>
+          <li>Amount: {{disputeInfo.offer.seller_offered_amount.value}} {{disputeInfo.offer.seller_offered_amount.currency_code}}</li>
+        </ul>
+        {{else}}
+        <p>No pending offer from seller...</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <div class = "row">
+    <div class = "col-md-12">
+      <div class = "card card-body">
+        <h4>Make an Offer:</h4>
+        <form method = "post" action = "makeOffer">
+          <div class = "form-group">
+            <label for="note">Add note:</label>
+            <input type = "text" name = "note" size = "50">
+          </div>
+          <div class = "form-group">
+            <label for="note">Amount:</label>
+            <input type = "text" name = "amount" placeholder="$0.00">
+          </div>
+          <fieldset class = "form-group">
+            <legend>Offer Type</legend>
+            <div class = "form-check">
+              <label class = "form-check-label">
+                <input type = "radio" class = "form-check-input" name = "offerType" id = "refund" value = "REFUND" checked>Refund
+              </label>
+            </div>
+            <div class = "form-check">
+              <label class = "form-check-label">
+                <input type = "radio" class = "form-check-input" name = "offerType" id = "refundWithReturn" value = "REFUND_WITH_RETURN">Refund With Return
+              </label>
+            </div>
+            <div class = "form-check">
+              <label class = "form-check-label">
+                <input type = "radio" class = "form-check-input" name = "offerType" id = "refundWithReplacement" value = "REFUND_WITH_REPLACEMENT">Refund With Replacement
+              </label>
+            </div>
+            </fieldset>
+            <input type = "hidden" name = "dispute_id" value = "{{disputeInfo.dispute_id}}">
+            <button type = "submit" class = "btn btn-primary">Submit Offer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class = "row">
+    <div class = "col-md-6">
+      <div class = "card card-body">
+        <h4>Send a Message:</h4>
+        <form method = "POST" action = "send-message">
+          <input type = "hidden" name = "dispute_id" value = "{{disputeInfo.dispute_id}}">
+          <textarea name = "message" rows = "4" columns = "40"></textarea>
+          <input type = "submit">
+        </form>
+      </div>
+    </div>
+    <div class = "col-md-6">
+      <div class = "card card-body">
+        <h4>Further Actions:</h4>
+        <div class = "col-md-3">
+          <form method = "post" action = "accept-claim">
+            <input type = "hidden" name = "dispute_id" value = "{{disputeInfo.dispute_id}}">
+            <input type = "text" name = "note" placeholder="add a note for acceptance" size = "35">
+            <input type = "submit" value = "Accept Claim">
+          </form>
+        </div>
+        <div class = "col-md-3">
+          <form method = "post" action = "escalate">
+            <input type = "hidden" name = "dispute_id" value = "{{disputeInfo.dispute_id}}">
+            <input type = "text" name = "note" placeholder="add a note for escalation" size = "35">
+            <input type = "submit" value = "Escalate">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<br><br>
+  <div class = "row">
+  <div class = "col-md-6 offset-md-3">
+    <div class = "form-group">
+    <label for = "listResponse">Response</label>
+    <textarea class = "form-control rounded-0" name = "listResponse" id = "listResponse" rows = "30" cols="200">{{disputesString}}{{e}}</textarea>
+    </div>
+  </div>
+</div>
+<br>
+<br>

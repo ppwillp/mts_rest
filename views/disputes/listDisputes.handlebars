@@ -1,0 +1,45 @@
+{{> _jumbotron}}
+
+<div class = "row">
+  <div class = "col-md-12">
+<div class = "card card-body">
+  <table class = "table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Update Time</th>
+        <th scope="col">Reason</th>
+        <th scope="col">Status</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each disputes.items}}
+      <tr>
+        <td>{{dispute_id}}</td>
+        <td>{{update_time}}</td>
+        <td>{{reason}}</td>
+        <td>{{status}}</td>
+        <td>{{dispute_amount.value}}</td>
+        <td><form method = "post" action = "/disputes/disputeDetails">
+          <input type = "hidden" name = "dispute_id" value = "{{dispute_id}}">
+          <input type = "submit">
+        </form></td>
+      </tr>
+      {{/each}}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class = "row">
+  <div class = "col-md-6 offset-md-3">
+    <div class = "form-group">
+    <label for = "listResponse">Response</label>
+    <textarea class = "form-control rounded-0" name = "listResponse" id = "listResponse" rows = "30" cols="200">{{disputesString}}{{e}}</textarea>
+    </div>
+  </div>
+</div>
+

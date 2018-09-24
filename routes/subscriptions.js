@@ -191,7 +191,7 @@ router.get('/billing_agreement_execute', (req, res) => {
 //Execute Agreement POST
 router.post('/executeBA', (req, res, next) => {
   const paymentToken = req.body.paymentToken;
-  console.log(paymentToken);
+  
   paypal.billingAgreement.execute(paymentToken, {}, function(error, billingAgreement) {
     if(error) {
       let errorResponse = JSON.stringify(error, null, 2);
@@ -207,6 +207,62 @@ router.post('/executeBA', (req, res, next) => {
         title: "Execute Billing Agreement",
         endpoint: "/v1/payments/billing-agreements/{payment_token}/agreement-execute",
         paymentInfo: paymentInfo 
+      });
+    }
+  });
+});
+
+//Billing Agreement Operations
+router.get('/billing_agreement_operations', (req, res) => {
+  res.render('subscriptions/billing_agreement_operations', {
+    title: "Billing Agreement Operations",
+    endpoint: "/billing-agreements"
+  });
+});
+
+router.post('/updateBA', (req, res, next) => {
+  const billingAgreementId = req.body.billingAgreementId;
+  const billing_agreement_update_attributes = req.body.json;
+
+  paypal.billingAgreement.update(billingAgreementId, billing_agreement_update_attributes, function(error, response) {
+    if(error) {
+      let updateErrorResponse = JSON.stringify(error, null, 2);
+      res.render('subscriptions/billing_agreement_operations', {
+        title: "Billing Agreement Operations",
+        endpoint: "/billing-agreements",
+        error: error,
+        updateErrorResponse: updateErrorResponse
+      });
+    } else {
+      let updateInfo = JSON.stringify(response, null, 2);
+      res.render('subscriptions/billing_agreement_operations', {
+        title: "Billing Agreement Operations",
+        endpoint: "/billing-agreements",
+        updateInfo: updateInfo
+      });
+    }
+  });
+});
+
+//Show BA Details
+router.post('/getBADetails', (req, res, next) => {
+  let billingAgreementId = req.body.billingAgreementId;
+
+  paypal.billingAgreement.get(billingAgreementId, function(error, response) {
+    if(error) {
+      let detailsErrorResponse = JSON.stringify(error, null, 2);
+      res.render('subscriptions/billing_agreement_operations', {
+        title: "Billing Agreement Operations",
+        endpoint: "/billing-agreements",
+        error: error,
+        detailsErrorResponse: detailsErrorResponse
+      });
+    } else {
+      let agreementDetails = JSON.stringify(response, null, 2);
+      res.render('subscriptions/billing_agreement_operations', {
+        title: "Billing Agreement Operations",
+        endpoint: "/billing-agreements",
+        agreementDetails: agreementDetails
       });
     }
   });
