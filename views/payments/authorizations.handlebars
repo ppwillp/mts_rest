@@ -1,0 +1,110 @@
+{{> _jumbotron}}
+
+<br>
+<h3>Capture Authorization</h3>
+<br>
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/captureAuth">
+  <div class = "form-group">
+    <label for="authID">Authorization ID</label>
+    <input type = "text" class = "form-control rounded-0" name = "authID">
+  </div>
+  <div class = "form-group">
+    <label for="json">Capture Authorization</label>
+    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+  "amount": {
+    "currency": "USD",
+    "total": "1.00"
+  },
+  "is_final_capture": true
+}</textarea>
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{captureInfo}}{{captureErrorResponse}}</textarea>
+</div>
+</div>
+
+<br><br>
+
+<h3>Show Authorization Details</h3>
+<br>
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/showAuthDetails">
+  <div class = "form-group">
+    <label for="authID">Show Authorization Details</label>
+    <input type = "text" class = "form-control rounded-0" name = "authID" value = "{{authID}}" placeholder = "authID">
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{authDetails}}{{authDetailsErrorResponse}}</textarea>
+</div>
+</div>
+
+<br><br>
+
+<h3>Reauthorize Payment</h3>
+<br>
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/reauthorizeAuth">
+  <div class = "form-group">
+    <label for="authID">Authorization ID</label>
+    <input type = "text" class = "form-control rounded-0" name = "authID" placeholder = "authID" value = "{{authID}}">
+  </div>
+  <div class = "form-group">
+    <label for="json">Re-Authorize Payment</label>
+    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+    "amount": {
+        "currency": "USD",
+        "total": "1.00"
+    }
+}</textarea>
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{reauthorizeInfo}}{{reauthorizeErrorResponse}}</textarea>
+</div>
+</div>
+
+<br><br>
+
+<h3>Void Authorization</h3>
+<br>
+
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/voidAuth">
+  <div class = "form-group">
+    <label for="authID">Authorization ID</label>
+    <input type = "text" class = "form-control rounded-0" name = "authID" placeholder = "authID" value = "{{authID}}">
+  </div>
+  
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{voidAuthInfo}}{{voidAuthErrorResponse}}</textarea>
+</div>
+</div>
+
+<br><br>
+
+<div class = "row">
+  <div class = "col-md-4 offset-md-8">
+    <a href = "/payments"><h2>Back to Payments API</h2></a>
+  </div>
+</div>

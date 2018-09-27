@@ -1,5 +1,8 @@
 {{> _jumbotron}}
 
+<br>
+<h3>Execute Payment</h3>
+<br>
 <div class = "row">
   <div class = "col-md-6">
   <form method = "post" action = "/payments/execute">
@@ -20,3 +23,39 @@
 </div>
 </div>
 
+<br><br>
+
+<h3>Show Payment Details</h3>
+<br>
+<div class = "row">
+  <div class = "col-md-6">
+  <form method = "post" action = "/payments/getDetails">
+  <div class = "form-group">
+    <label for="payID">Show Payment Details</label>
+    <input type = "text" class = "form-control rounded-0" name = "payID" id = "payID" value = "{{paymentID}}">
+  </div>
+  <button type = "submit" class = "btn btn-primary">Submit</button>
+  </form>
+</div>
+<div class = "col-md-6">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{getInfo}}{{errorResponse}}</textarea>
+</div>
+</div>
+
+<br><br>
+
+<div class = "row">
+  <div class = 'col-md-6'>
+    <a href = "authorizations"><h3>Capture Authorization</h3></a>
+  </div>
+  <div class = 'col-md-6'>
+    <a href = "orders"><h3>Capture Order</h3></a>
+  </div>
+</div>
+<br><br>
+<div class = "row">
+  <div class = "col-md- offset-md-6">
+    <a href = "/payments"><h3>Back to Payments API</h3></a>
+  </div>
+</div>

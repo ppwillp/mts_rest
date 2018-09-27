@@ -87,7 +87,8 @@ router.post('/listDisputes', (req, res, next) => {
           res.render('disputes/listDisputes', {
             title: "List Disputes",
             endpoint: "/v1/customer/disputes",
-            e: e
+            e: e,
+            eString: eString
           });
         });
     });
@@ -235,7 +236,7 @@ router.post('/send-message', (req, res, next) => {
   const dispute_id = req.body.dispute_id;
   const message = req.body.message;
 
-  var disputeMessage = {
+  let disputeMessage = {
     getToken: function() {
       return request({
         "method": "POST",
