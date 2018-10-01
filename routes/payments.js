@@ -147,6 +147,7 @@ router.post('/execute', (req, res, next) => {
       console.log(payment);
       const paymentInfo = JSON.stringify(payment, null, 2);
       let paymentID = payment.id;
+      console.log(res.headersSent);
       res.render('payments/execute', {
         title: title,
         paymentInfo: paymentInfo,
@@ -173,6 +174,7 @@ router.post('/getDetails', (req, res, next) => {
     } else {
       let getInfo = JSON.stringify(payment, null, 2);
       let paymentID = payment.id;
+      
       res.render('payments/execute', {
         title: "Show Payment Details",
         endpoint: "/v1/payments/payment/{payment_id}",

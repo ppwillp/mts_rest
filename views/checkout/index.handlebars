@@ -1,1 +1,331 @@
 {{> _jumbotron}}
+<div class = "row">
+  <div class = "col-md-6">
+    <a href = "https://developer.paypal.com/docs/checkout/how-to/customize-button/" target="blank"><h5>How to Customize the Checkout Button</h5></a>
+
+  </div>
+</div>
+<br><br>
+
+<h3>Generate Button</h3>
+
+<div class = "card card-body">
+  <h5>Style</h5>
+  <br>
+  <form action = "#" id = "buttonGenerator">
+  <div class = "row">
+    <div class = "col-md-4">
+      <div class = "form-group">
+        <label for = "color">Color</label>
+        <select class = "form-control" id = "color" name = "color">
+          <option value = "gold">gold</option>
+          <option value = "blue">blue</option>
+          <option value = "silver">silver</option>
+          <option value = "black">black</option>
+        </select>
+      </div>
+      </div>
+      <div class = "col-md-4">
+        <div class = "form-group">
+        <label for = "shape">Shape</label>
+        <select class = "form-control" id = "shape" name = "shape">
+          <option value = "pill">pill</option>
+          <option value = "rect">rect</option>
+        </select>
+      </div>
+      </div>
+      <div class = "col-md-4">
+        <div class = "form-group">
+        <label for = "size">Size</label>
+        <select class = "form-control" id = "size" name = "size">
+          <option value = "small">small</option>
+          <option value = "medium">medium</option>
+          <option value = "large">large</option>
+          <option value = "responsive">responsive</option>
+        </select>
+      </div>
+      </div>
+  </div>
+
+  <div class = "row">
+    <div class = "col-md-4">
+      <div class = "form-group">
+        <label for = "label">Label</label>
+        <select class = "form-control" id = "label" name = "label">
+          <option value = "checkout">checkout</option>
+          <option value = "credit">credit</option>
+          <option value = "pay">pay</option>
+          <option value = "buynow">buynow</option>
+          <option value = "paypal">paypal</option>
+          <option value = "installment">installment</option>
+        </select>
+      </div>
+    </div>
+    <div class = "col-md-4">
+      <div class = "form-group">
+        <label for = "tagline">Tagline</label>
+        <select class = "form-control" id = "tagline" name = "tagline">
+          <option value = "true">true</option>
+          <option value = "false">false</option>
+        </select>
+      </div>
+    </div>
+    <div class = "col-md-4">
+      <div class = "form-group">
+        <label for = "styleHeight">Style.Height</label>
+        <select class = "form-control" id = "styleHeight" name = "styleHeight">
+          <option value = "small">small</option>
+          <option value = "medium">medium</option>
+          <option value = "large">large</option>
+          </select>
+      </div>
+    </div>
+  </div>
+
+  <div class = "row">
+    <div class = "col-md-4">
+      <div class = "form-group">
+        <label for = "layout">Layout</label>
+        <select class = "form-control" id = "layout" name = "layout">
+          <option value = "horizontal">horizontal</option>
+          <option value = "vertical">vertical</option>
+        </select>
+      </div>
+    </div>
+    <div class = "col-md-4">
+      <div class="form-check">
+    <h4>Funding Allowed</h4>
+  <label class="form-check-label">
+    <input type="checkbox" class="form-check-input" name = "credit_allowed" id = "credit_allowed" checked>CREDIT
+  </label>
+</div>
+<div class="form-check">
+  <label class="form-check-label">
+    <input type="checkbox" class="form-check-input" name = "card_allowed" id = "card_allowed" checked>CARD
+  </label>
+</div>
+<div class="form-check">
+  <label class="form-check-label">
+    <input type="checkbox" class="form-check-input" name = "venmo_allowed" id = "venmo_allowed" checked>VENMO
+  </label>
+</div>
+<div class="form-check">
+  <label class="form-check-label">
+    <input type="checkbox" class="form-check-input" name = "elv_allowed" id = "elv_allowed" checked>ELV
+  </label>
+</div>
+    </div>
+    
+  </div>
+
+  <div class = "row">
+    <div class = "col-md-4">
+      <div class = "form-group">
+        <label for = "fundingicons">Funding icons</label>
+          <input type = "checkbox" name = "fundingicons" id = "fundingicons">
+        </div>
+    </div>
+  </div>
+  
+  <div class = "row">
+    <div class = "col-md-3">
+      <button type = "submit" class = "btn btn-primary">Build Button</button>
+    </div>
+    <div class = "col-md-6 offset-md-3" id = "paypal-button">
+    </div>
+  </div>
+  </form>
+</div>
+<br><br>
+<div class = "row">
+  <div class = "col-md-6 offset-md-3">
+  <label for="response">Response</label>
+<textarea class = "form-control rounded-0" name = "response" id = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+</div>
+</div>
+
+<script type = "text/javascript">
+//logic here by Robert T
+//if credit is selected, change available colors
+function labelChanged() {
+  var label = document.getElementById("label").value,
+      colorDropdown = document.getElementById("color");
+
+      if(label == 'credit') {
+        colorDropdown.innerHTML = '<option value = "black">Black</option><option value = "darkblue">Dark Blue</option>';
+      } else {
+        colorDropdown.innerHTML = '<option value = "gold">Gold</option><option value = "blue">Blue</option><option value = "silver">Silver</option><option value = "black">Black</option>';
+      }
+}
+
+document.getElementById("label").addEventListener("change", labelChanged);
+
+function layoutChanged(obj) {
+  var layout = obj.layout,
+      size = obj.size,
+      taglineBox = document.getElementById("tagline"),
+      funding = document.getElementById("fundingicons"),
+      labelBox = document.getElementById("label"),
+      sizeBox = document.getElementById("size");
+      if(layout == 'vertical') {
+        label.disabled = true;
+        tagline.disabled = true;
+        funding.checked = false;
+        funding.disabled = true;
+
+        if(size == 'small') 
+          size = 'medium';
+          sizeBox.innerHTML = '<option value = "medium">Medium</option><option value = "large">Large</option><option value = "responsive">Responsive</option';
+          sizeBox.value = size;
+        } else {
+          labelBox.disabled = false;
+          taglineBox.disabled = false;
+          funding.disabled = false;
+          sizeBox.innerHTML = '<option value = "small">Small</option><option value = "medium">Medium</option><option value = "large">Large</option><option value = "responsive">Responsive</option>';
+          sizeBox.value = size;
+        }
+      }
+      document.getElementById("layout").addEventListener("change", layoutChanged);
+
+    function renderButton(obj) {
+        document.getElementById("paypal-button").innerHTML = "";
+        var color = obj.color,
+            size = obj.size,
+            shape = obj.shape,
+            label = obj.label,
+            tagline = obj.tagline,
+            layout = obj.layout,
+            credit_allowed = obj.credit_allowed,
+            card_allowed = obj.card_allowed,
+            elv_allowed = obj.elv_allowed,
+            fundingicons = obj.fundingicons,
+            venmo_allowed = obj.venmo_allowed,
+            allowed_methods = [],
+            disallowed_methods = [];
+
+            if(credit_allowed) {
+              allowed_methods.push(paypal.FUNDING.CREDIT);
+            } else {
+              disallowed_methods.push(paypal.FUNDING.CREDIT);
+            }
+
+            if(card_allowed) {
+              allowed_methods.push(paypal.FUNDING.CARD);
+            } else {
+              disallowed_methods.push(paypal.FUNDING.CARD);
+            }
+
+            if(elv_allowed) {
+              allowed_methods.push(paypal.FUNDING.ELV);
+            } else {
+              disallowed_methods.push(paypal.FUNDING.ELV);
+            }
+
+            if(venmo_allowed) {
+              allowed_methods.push(paypal.FUNDING.VENMO);
+            } 
+
+            if(label == 'credit') {
+              if(color != "black" && color != "darkblue") {
+                alert("Black or Blue are the only valid PayPal Credit colors");
+                return;
+              } else 
+                fundingicons = false;
+              }
+
+              if(color == 'darkblue' && label != "credit") {
+                alert("Dark Blue is only valid for label = credit");
+                return;
+              }
+
+              if(layout == 'vertical') {
+                label = false;
+                tagline = false;
+                fundingicons = false;
+
+                if(size == "small") 
+                  size = "medium";
+                }
+
+                paypal.Button.render({
+                  env: 'sandbox',
+                  commit: true,
+                  style: {
+                    color: color,
+                    size: size,
+                    shape: shape,
+                    tagline: tagline,
+                    layout: layout,
+                    label: label,
+                    fundingicons: fundingicons
+                  },
+                  funding: {
+                    allowed: allowed_methods,
+                    disallowed: disallowed_methods
+                  },
+              
+                  payment: function() {
+                    var CREATE_URL = '/checkout/create_payment';
+
+                    return paypal.request.post(CREATE_URL)
+                      .then(function(res) {
+                        console.log(res);
+                        return res;
+                      });
+                  },
+
+                  onAuthorize: function(data, actions) {
+                    
+                    var EXECUTE_URL = '/checkout/execute_payment';
+
+                    var data = {
+                      paymentID: data.paymentID,
+                      payerID: data.payerID
+                    };
+
+                    console.log(data);
+
+                    return paypal.request.post(EXECUTE_URL, data)
+                      .then(function(res) {
+                        var responseBox = document.getElementById("response");
+
+                        var jsonString = JSON.stringify(res, null, 2);
+                        response.value = jsonString;
+                      });
+                  }
+                }, '#paypal-button');
+              
+            
+    }
+
+
+//funciton takes values from form and creates an object
+
+$.fn.serializeObject = function() {
+       var o = {};
+       var a = this.serializeArray();
+       $.each(a, function() {
+         if(o[this.name] !== undefined && o[this.name] !== '') {
+           if(!o[this.name].push) {
+             o[this.name] = [o[this.name]];
+           }
+           o[this.name].push(this.value || '');// || ''
+         } else {
+           o[this.name] = this.value || '';
+         }
+       });
+       return o;
+     };
+
+  $(function($) {
+    $(document).ready(function() {
+      $('#buttonGenerator').submit(function(e) {
+        e.preventDefault();
+        var obj = $(this).serializeObject();
+        console.log(obj);
+        renderButton(obj);
+        console.log(document.getElementById("fundingicons").value);
+      });
+    });
+  });
+</script>
