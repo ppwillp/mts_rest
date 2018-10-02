@@ -122,7 +122,10 @@
     <div class = "col-md-4">
       <div class = "form-group">
         <label for = "fundingicons">Funding icons</label>
-          <input type = "checkbox" name = "fundingicons" id = "fundingicons">
+          <select class = "form-control" id = "fundingicons" name = "fundingicons">
+            <option value = "true">true</option>
+            <option value = "false">false</option>
+          </select> 
         </div>
     </div>
   </div>
@@ -158,33 +161,54 @@ function labelChanged() {
       }
 }
 
+
+
 document.getElementById("label").addEventListener("change", labelChanged);
 
 function layoutChanged(obj) {
   var layout = obj.layout,
       size = obj.size,
       taglineBox = document.getElementById("tagline"),
-      funding = document.getElementById("fundingicons"),
+      fundingicons = obj.fundingicons,
       labelBox = document.getElementById("label"),
       sizeBox = document.getElementById("size");
-      if(layout == 'vertical') {
-        label.disabled = true;
+      if(layout == "vertical") {
+      label.disabled = true;
         tagline.disabled = true;
-        funding.checked = false;
-        funding.disabled = true;
+        labelBox.value = false;
+        taglineBox.value = false; 
+        fundingicons = false;
 
-        if(size == 'small') 
-          size = 'medium';
+        if(size == "small") 
+          size = "medium";
           sizeBox.innerHTML = '<option value = "medium">Medium</option><option value = "large">Large</option><option value = "responsive">Responsive</option';
           sizeBox.value = size;
         } else {
           labelBox.disabled = false;
           taglineBox.disabled = false;
-          funding.disabled = false;
+         // funding.disabled = false;
           sizeBox.innerHTML = '<option value = "small">Small</option><option value = "medium">Medium</option><option value = "large">Large</option><option value = "responsive">Responsive</option>';
           sizeBox.value = size;
         }
       }
+
+      /*function layoutChanged(obj) {
+        var layout = obj.layout,
+            size = obj.size,
+            tagline = obj.tagline,
+            label = obj.label,
+            fundingicons = obj.fundingicons;
+
+            if(layout == "vertical") {
+              label = false;
+              tagline = false;
+              fundingicons = false;
+
+              if(size == "small")
+                  size = "medium";
+                  
+            } 
+      }*/
       document.getElementById("layout").addEventListener("change", layoutChanged);
 
     function renderButton(obj) {
@@ -247,6 +271,54 @@ function layoutChanged(obj) {
                   size = "medium";
                 }
 
+                if(obj.layout == 'vertical') {
+                  
+                  paypal.Button.render({
+                  env: 'sandbox',
+                  commit: true,
+                  style: {
+                    color: color,
+                    size: size,
+                    shape: shape,
+                    layout: layout
+                  },
+                  funding: {
+                    allowed: allowed_methods,
+                    disallowed: disallowed_methods
+                  },
+
+                  payment: function() {
+                    var CREATE_URL = '/checkout/create_payment';
+                    
+                    return paypal.request.post(CREATE_URL)
+                      .then(function(res) {
+                        console.log(res);
+                        return res;
+                      });
+                  },
+
+                  onAuthorize: function(data, actions) {
+                    
+                    var EXECUTE_URL = '/checkout/execute_payment';
+
+                    var data = {
+                      paymentID: data.paymentID,
+                      payerID: data.payerID
+                    };
+
+                    console.log(data);
+
+                    return paypal.request.post(EXECUTE_URL, data)
+                      .then(function(res) {
+                        var responseBox = document.getElementById("response");
+
+                        var jsonString = JSON.stringify(res, null, 2);
+                        response.value = jsonString;
+                      });
+                  }
+                }, '#paypal-button');
+      } else {
+                
                 paypal.Button.render({
                   env: 'sandbox',
                   commit: true,
@@ -263,10 +335,10 @@ function layoutChanged(obj) {
                     allowed: allowed_methods,
                     disallowed: disallowed_methods
                   },
-              
+
                   payment: function() {
                     var CREATE_URL = '/checkout/create_payment';
-
+                    
                     return paypal.request.post(CREATE_URL)
                       .then(function(res) {
                         console.log(res);
@@ -297,6 +369,7 @@ function layoutChanged(obj) {
               
             
     }
+    }
 
 
 //funciton takes values from form and creates an object
@@ -322,9 +395,10 @@ $.fn.serializeObject = function() {
       $('#buttonGenerator').submit(function(e) {
         e.preventDefault();
         var obj = $(this).serializeObject();
-        console.log(obj);
+        console.log("icons " + obj.fundingicons);
         renderButton(obj);
-        console.log(document.getElementById("fundingicons").value);
+        
+        console.log(obj);
       });
     });
   });
