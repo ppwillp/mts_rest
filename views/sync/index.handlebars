@@ -161,11 +161,13 @@
            queryString = queryString + "&transaction_status=" + obj.transactionStatus;
          }
          if(obj.hasOwnProperty('transactionAmountMin') && typeof obj['transactionAmountMin'] === 'string' && obj['transactionAmountMin'].length) {
-           queryString = queryString + "&transaction_amount_min=" + obj.transactionAmountMin;
+           if(obj.hasOwnProperty('transactionAmountMax') && typeof obj['transactionAmountMax'] === 'string' && obj['transactionAmountMax'].length) {
+           queryString = queryString + "&transaction_amount=[" + obj.transactionAmountMin + " TO " + obj.transactionAmountMax + "]";
          }
-         if(obj.hasOwnProperty('transactionAmountMax') && typeof obj['transactionAmountMax'] === 'string' && obj['transactionAmountMax'].length) {
+         }
+         /*if(obj.hasOwnProperty('transactionAmountMax') && typeof obj['transactionAmountMax'] === 'string' && obj['transactionAmountMax'].length) {
            queryString = queryString + "&transaction_amount_max=" + obj.transactionAmountMax;
-         }
+         }*/
          if(obj.hasOwnProperty('transactionCurrency') && typeof obj['transactionCurrency'] === 'string' && obj['transactionCurrency'].length) {
            queryString = queryString + "&transaction_currency=" + obj.transactionCurrency;
          }

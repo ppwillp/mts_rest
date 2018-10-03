@@ -146,6 +146,7 @@
 <textarea class = "form-control rounded-0" name = "response" id = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
 </div>
 </div>
+<br><br>
 
 <script type = "text/javascript">
 //logic here by Robert T
@@ -192,23 +193,6 @@ function layoutChanged(obj) {
         }
       }
 
-      /*function layoutChanged(obj) {
-        var layout = obj.layout,
-            size = obj.size,
-            tagline = obj.tagline,
-            label = obj.label,
-            fundingicons = obj.fundingicons;
-
-            if(layout == "vertical") {
-              label = false;
-              tagline = false;
-              fundingicons = false;
-
-              if(size == "small")
-                  size = "medium";
-                  
-            } 
-      }*/
       document.getElementById("layout").addEventListener("change", layoutChanged);
 
     function renderButton(obj) {
@@ -272,7 +256,7 @@ function layoutChanged(obj) {
                 }
 
                 if(obj.layout == 'vertical') {
-                  
+
                   paypal.Button.render({
                   env: 'sandbox',
                   commit: true,

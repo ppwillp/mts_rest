@@ -13,7 +13,7 @@ ADD ensureAuthenticated TO ALL ROUTES
 
 */
 
-/*function getCreds(req) {
+function getCreds(req) {
   const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
 
@@ -24,16 +24,18 @@ ADD ensureAuthenticated TO ALL ROUTES
   });
 
   return paypal;
-}*/
+}
 
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
 res.render('checkout/index', {
   title: "PayPal Checkout",
   endpoint: ""
 });
 });
 
-router.post('/create_payment', (req, res, next) => {
+router.post('/create_payment', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
+
   const create_payment_json = {
     "intent": "sale",
     "payer": {
@@ -66,14 +68,15 @@ router.post('/create_payment', (req, res, next) => {
       console.log(error);
       return next(error);
     } else {
-      console.log(payment);
+      
       res.send(payment.id);
       
     }
   })
 });
 
-router.post('/execute_payment', (req, res, next) => {
+router.post('/execute_payment', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const payerID = req.body.payerID;
   const paymentID = req.body.paymentID;
 

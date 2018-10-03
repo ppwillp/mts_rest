@@ -13,7 +13,7 @@ ADD ensureAuthenticated TO ALL ROUTES
 
 */
 
-/*function getCreds(req) {
+function getCreds(req) {
   const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
 
@@ -24,7 +24,7 @@ ADD ensureAuthenticated TO ALL ROUTES
   });
 
   return paypal;
-}*/
+}
 
 router.get('/', (req, res) => {
   const title = "Create Payment";
@@ -37,16 +37,8 @@ router.get('/', (req, res) => {
 
 //create payment
 
-router.post('/create', (req, res, next) => {
-  //getCreds(req);
-  /* const client_id = req.user.client_id;
-  const client_secret = req.user.client_secret;
-  console.log(client_id);
-  paypal.configure({
-    'mode': 'sandbox',
-    'client_id': client_id,
-    'client_secret': client_secret
-  });*/
+router.post('/create', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
 
   const title = "Create Payment";
   const endpoint = "/v1/payments/payment";
@@ -88,7 +80,7 @@ router.post('/create', (req, res, next) => {
 
   //after leaving PayPal, load this page
 
-router.get('/execute', (req, res) => {
+router.get('/execute', ensureAuthenticated, (req, res) => {
   /* const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
   console.log(client_id);
@@ -97,6 +89,8 @@ router.get('/execute', (req, res) => {
     'client_id': client_id,
     'client_secret': client_secret
   });*/
+
+  getCreds(req);
   const title = "Execute Payment";
   const endpoint = "/v1/payments/payment/{payment_id}/execute";
   const payerID = req.query.PayerID;
@@ -115,7 +109,7 @@ router.get('/execute', (req, res) => {
 
 //call to execute payment
 
-router.post('/execute', (req, res, next) => {
+router.post('/execute', ensureAuthenticated, (req, res, next) => {
  /* const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
   console.log(client_id);
@@ -124,7 +118,7 @@ router.post('/execute', (req, res, next) => {
     'client_id': client_id,
     'client_secret': client_secret
   });*/
-
+  getCreds(req);
   const title = "Execute Payment";
   const endpoint = "/v1/payments/payment/{payment_id}/execute";
   const paymentID = req.body.paymentID;
@@ -158,7 +152,8 @@ router.post('/execute', (req, res, next) => {
   });
 });
 
-router.post('/getDetails', (req, res, next) => {
+router.post('/getDetails', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const paymentId = req.body.payID;
   
   
@@ -188,14 +183,16 @@ router.post('/getDetails', (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Authorizations//
 
-router.get('/authorizations', (req, res) => {
+router.get('/authorizations', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   res.render('payments/authorizations', {
     title: "Capture Authorization",
     endpoint: "/v1/payments/authorization/{authorization_id}/capture"
   });
 });
 
-router.post('/captureAuth', (req, res, next) => {
+router.post('/captureAuth', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const authID = req.body.authID;
   let capture_details = req.body.json;
   capture_details = JSON.parse(capture_details);
@@ -222,7 +219,8 @@ router.post('/captureAuth', (req, res, next) => {
   });
 });
 
-router.post('/showAuthDetails', (req, res, next) => {
+router.post('/showAuthDetails', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const authID = req.body.authID;
 
   paypal.authorization.get(authID, function(error, response) {
@@ -247,7 +245,8 @@ router.post('/showAuthDetails', (req, res, next) => {
   });
 });
 
-router.post('/reauthorizeAuth', (req, res, next) => {
+router.post('/reauthorizeAuth', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const authID = req.body.ID;
   let reauthorize_details = req.body.json;
   reauthorize_details = JSON.parse(reauthorize_details);
@@ -274,7 +273,8 @@ router.post('/reauthorizeAuth', (req, res, next) => {
   });
 });
 
-router.post('/voidAuth', (req, res, next) => {
+router.post('/voidAuth', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const authID = req.body.authID;
 
   paypal.authorization.void(authID, function(error, response) {
@@ -304,14 +304,16 @@ router.post('/voidAuth', (req, res, next) => {
 /////*****                  ORDERS *********** */
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-router.get('/orders', (req, res) => {
+router.get('/orders', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   res.render('payments/orders', {
     title: "Capture Order",
     endpoint: "/v1/payments/orders/{order_id}/capture"
   });
 });
 
-router.post('/captureOrder', (req, res, next) => {
+router.post('/captureOrder', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const orderID = req.body.orderID;
   let capture_details = req.body.json;
   capture_details = JSON.parse(capture_details);
@@ -338,7 +340,8 @@ router.post('/captureOrder', (req, res, next) => {
   });
 });
 
-router.post('/authOrder', (req, res, next) => {
+router.post('/authOrder', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const orderID = req.body.orderID;
   let authorize_details = req.body.json;
   authorize_details = JSON.parse(authorize_details);
@@ -365,7 +368,8 @@ router.post('/authOrder', (req, res, next) => {
   });
 });
 
-router.post('/showOrderDetails', (req, res, next) => {
+router.post('/showOrderDetails', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const orderID = req.body.orderID;
 
   paypal.order.get(orderID, function(error, response) {
@@ -390,7 +394,8 @@ router.post('/showOrderDetails', (req, res, next) => {
   });
 });
 
-router.post('/voidOrder', (req, res, next) => {
+router.post('/voidOrder', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const orderID = req.body.orderID;
 
   paypal.order.void(orderID, function(error, response) {

@@ -2,7 +2,24 @@ const express = require('express');
 const router = express.Router();
 const paypal = require('paypal-rest-sdk');
 
-router.get('/', (req, res) => {
+//load Authentication Helper
+const {ensureAuthenticated} = require('../helpers/auth');
+
+function getCreds(req) {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  paypal.configure({
+    'mode': 'sandbox',
+    'client_id': client_id,
+    'client_secret': client_secret
+  });
+
+  return paypal;
+}
+
+router.get('/', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   function randomInt() {
     return Math.floor(Math.random() * 100000);
   }
@@ -15,7 +32,8 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/create', (req, res, next) => {
+router.post('/create', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
 const creat_payout_json = req.body.json;
 
 paypal.payout.create(creat_payout_json, function(error, payment) {
@@ -43,7 +61,8 @@ paypal.payout.create(creat_payout_json, function(error, payment) {
 });
 });
 
-router.post('/getPayoutDetails', (req, res, next) => {
+router.post('/getPayoutDetails', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
 const payoutId = req.body.id;
 console.log("payoutID is " + payoutId);
 paypal.payout.get(payoutId, function(error, payout) {

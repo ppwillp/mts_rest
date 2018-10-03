@@ -2,7 +2,24 @@ const express = require('express');
 const router = express.Router();
 const paypal = require('paypal-rest-sdk');
 
-router.get('/', (req, res) => {
+//load Authentication Helper
+const {ensureAuthenticated} = require('../helpers/auth');
+
+function getCreds(req) {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  paypal.configure({
+    'mode': 'sandbox',
+    'client_id': client_id,
+    'client_secret': client_secret
+  });
+
+  return paypal;
+}
+
+router.get('/', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   res.render('subscriptions/index', {
     title: "Subscriptions",
     endpoint: 'Billing Plans and Billing Agreements'
@@ -11,7 +28,8 @@ router.get('/', (req, res) => {
 
 //billing plans routes
 
-router.get('/billing_plans', (req, res) => {
+router.get('/billing_plans', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   res.render('subscriptions/billing_plans', {
     title: "Create and Update Billing Plan",
     endpoint: "/v1/payments/billing-plans"
@@ -19,7 +37,8 @@ router.get('/billing_plans', (req, res) => {
 });
 
 //create billing plan
-router.post('/create_billing_plan', (req, res, next) => {
+router.post('/create_billing_plan', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
 let isoDate = new Date();
 isoDate.setSeconds(isoDate.getSeconds() + 4);
 isoDate.toISOString().slice(0, 19) + 'Z';
@@ -52,7 +71,8 @@ paypal.billingPlan.create(billingPlanAttributes, function(error, billingPlan) {
 });
 
 //update billing plan
-router.post('/update', (req, res, next) => {
+router.post('/update', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const billing_plan_update_attributes = req.body.json;
   const billingPlanId = req.body.planId;
 
@@ -75,7 +95,8 @@ router.post('/update', (req, res, next) => {
   });
 });
 
-router.get('/billing_plans_details', (req, res) => {
+router.get('/billing_plans_details', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   res.render('subscriptions/billing_plans_details', {
     title: "List and Show Billing Plan Details",
     endpoint: "/v1/payments/billing-plans/{plan_id}" 
@@ -83,8 +104,8 @@ router.get('/billing_plans_details', (req, res) => {
 });
 
 //list billing plans
-router.post('/list', (req, res, next) => {
-  
+router.post('/list', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   let list_billing_plan = req.body.json;
   console.log(list_billing_plan);
   list_billing_plan = JSON.parse(list_billing_plan);
@@ -110,7 +131,8 @@ router.post('/list', (req, res, next) => {
 });
 
 //Billing Plan Details
-router.post('/planDetails', (req, res, next) => {
+router.post('/planDetails', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const billingPlanId = req.body.billingPlanId;
   paypal.billingPlan.get(billingPlanId, function(error, billingPlan) {
     if(error) {
@@ -137,7 +159,8 @@ router.post('/planDetails', (req, res, next) => {
 //Billing Agreements//
 
 //create Billing Agreement
-router.get('/billing_agreement_create', (req, res) => {
+router.get('/billing_agreement_create', ensureAuthenticated, (req, res) => {
+  getCreds(req);
 
 res.render('subscriptions/billing_agreement_create', {
   title: "Create Billing Agreement API",
@@ -145,7 +168,8 @@ res.render('subscriptions/billing_agreement_create', {
 });
 });
 
-router.post('/createBA', (req, res, next) => {
+router.post('/createBA', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const billingAgreementAttributes = req.body.json;
 
   paypal.billingAgreement.create(billingAgreementAttributes, function(error, billingAgreement) {
@@ -179,7 +203,8 @@ router.post('/createBA', (req, res, next) => {
 });
 
 //Execute Agreement GET
-router.get('/billing_agreement_execute', (req, res) => {
+router.get('/billing_agreement_execute', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   let token = req.query.token;
   res.render('subscriptions/billing_agreement_execute', {
     title: "Execute Billing Agreement",
@@ -189,7 +214,8 @@ router.get('/billing_agreement_execute', (req, res) => {
 });
 
 //Execute Agreement POST
-router.post('/executeBA', (req, res, next) => {
+router.post('/executeBA', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const paymentToken = req.body.paymentToken;
   
   paypal.billingAgreement.execute(paymentToken, {}, function(error, billingAgreement) {
@@ -213,14 +239,16 @@ router.post('/executeBA', (req, res, next) => {
 });
 
 //Billing Agreement Operations
-router.get('/billing_agreement_operations', (req, res) => {
+router.get('/billing_agreement_operations', ensureAuthenticated, (req, res) => {
+  getCreds(req);
   res.render('subscriptions/billing_agreement_operations', {
     title: "Billing Agreement Operations",
     endpoint: "/billing-agreements"
   });
 });
 
-router.post('/updateBA', (req, res, next) => {
+router.post('/updateBA', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   const billingAgreementId = req.body.billingAgreementId;
   const billing_agreement_update_attributes = req.body.json;
 
@@ -245,7 +273,8 @@ router.post('/updateBA', (req, res, next) => {
 });
 
 //Show BA Details
-router.post('/getBADetails', (req, res, next) => {
+router.post('/getBADetails', ensureAuthenticated, (req, res, next) => {
+  getCreds(req);
   let billingAgreementId = req.body.billingAgreementId;
 
   paypal.billingAgreement.get(billingAgreementId, function(error, response) {

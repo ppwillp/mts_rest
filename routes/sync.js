@@ -20,8 +20,7 @@ router.post('/transactions', ensureAuthenticated, (req, res, next) => {
   const client_secret = req.user.client_secret;
 
 let stringToEncode = client_id + ":" + client_secret;
-console.log("stringToEncode: " + stringToEncode);
-console.log(encode.encode(stringToEncode, 'base64'));
+
 const encodedString = encode.encode(stringToEncode, 'base64');
 const uri = req.body.queryString;
 var transactions = {

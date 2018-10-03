@@ -106,7 +106,14 @@ const encodedString = encode.encode(stringToEncode, 'base64');
 
 });
 
-router.post('/disputeDetails', (req, res, next) => {
+router.post('/disputeDetails', ensureAuthenticated, (req, res, next) => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  let stringToEncode = client_id + ":" + client_secret;
+
+  const encodedString = encode.encode(stringToEncode, 'base64');
+
   const dispute_id = req.body.dispute_id;
 
   var disputeDetails = {
@@ -116,7 +123,7 @@ router.post('/disputeDetails', (req, res, next) => {
         "uri": "https://api.sandbox.paypal.com/v1/oauth2/token",
         "json": true,
         "headers": {
-          "Authorization": "Basic QWZfT3BhYnVFQ3NOZlU2QXpMZjFQVDIxM2IzQkdBeTZDUkphNUlFcjNodGVZbE9Gb2JnZW8wRDlnVFh4Z0g0bDRVanloSnBsVlcyeGFHVk86RUljQ1NodUQ2NF9QX3BvRklmbGRGUzl4ajd0X3dmS0RUU3pXQ2FPeTh5OEpVdHNaOUEzcHA5ZmNnUGZXY3FpVVd3MDFCT1Bsel82RFdwVXQ="
+          "Authorization": "Basic " + encodedString
           },
         "form": {
           "grant_type": "client_credentials"
@@ -242,7 +249,14 @@ router.post('/disputeDetails', (req, res, next) => {
 
 });
 
-router.post('/send-message', (req, res, next) => {
+router.post('/send-message', ensureAuthenticated, (req, res, next) => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  let stringToEncode = client_id + ":" + client_secret;
+
+  const encodedString = encode.encode(stringToEncode, 'base64');
+
   const title = "Send Message";
   const dispute_id = req.body.dispute_id;
   const message = req.body.message;
@@ -254,7 +268,7 @@ router.post('/send-message', (req, res, next) => {
         "uri": "https://api.sandbox.paypal.com/v1/oauth2/token",
         "json": true,
         "headers": {
-          "Authorization": "Basic QWZfT3BhYnVFQ3NOZlU2QXpMZjFQVDIxM2IzQkdBeTZDUkphNUlFcjNodGVZbE9Gb2JnZW8wRDlnVFh4Z0g0bDRVanloSnBsVlcyeGFHVk86RUljQ1NodUQ2NF9QX3BvRklmbGRGUzl4ajd0X3dmS0RUU3pXQ2FPeTh5OEpVdHNaOUEzcHA5ZmNnUGZXY3FpVVd3MDFCT1Bsel82RFdwVXQ="
+          "Authorization": "Basic " + encodedString
           },
         "form": {
           "grant_type": "client_credentials"
@@ -312,7 +326,14 @@ main()
   });
 });
 
-router.post('/accept-claim', (req, res, next) => {
+router.post('/accept-claim', ensureAuthenticated, (req, res, next) => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  let stringToEncode = client_id + ":" + client_secret;
+
+  const encodedString = encode.encode(stringToEncode, 'base64');
+
   const title = "Accept Claim";
   const dispute_id = req.body.dispute_id;
   const note = req.body.note;
@@ -323,7 +344,7 @@ router.post('/accept-claim', (req, res, next) => {
         "uri": "https://api.sandbox.paypal.com/v1/oauth2/token",
         "json": true,
         "headers": {
-          "Authorization": "Basic QWZfT3BhYnVFQ3NOZlU2QXpMZjFQVDIxM2IzQkdBeTZDUkphNUlFcjNodGVZbE9Gb2JnZW8wRDlnVFh4Z0g0bDRVanloSnBsVlcyeGFHVk86RUljQ1NodUQ2NF9QX3BvRklmbGRGUzl4ajd0X3dmS0RUU3pXQ2FPeTh5OEpVdHNaOUEzcHA5ZmNnUGZXY3FpVVd3MDFCT1Bsel82RFdwVXQ=",
+          "Authorization": "Basic " + encodedString
         },
         "form": {
           "grant_type": "client_credentials"
@@ -380,7 +401,14 @@ router.post('/accept-claim', (req, res, next) => {
   });
 });
 
-router.post('/escalate', (req, res, next) => {
+router.post('/escalate', ensureAuthenticated, (req, res, next) => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  let stringToEncode = client_id + ":" + client_secret;
+
+  const encodedString = encode.encode(stringToEncode, 'base64');
+
   const title = "Escalate Dispute to a Claim";
   const dispute_id = req.body.dispute_id;
   const note = req.body.note;
@@ -392,7 +420,7 @@ router.post('/escalate', (req, res, next) => {
         "uri": "https://api.sandbox.paypal.com/v1/oauth2/token",
         "json": true,
         "headers": {
-          "Authorization": "Basic QWZfT3BhYnVFQ3NOZlU2QXpMZjFQVDIxM2IzQkdBeTZDUkphNUlFcjNodGVZbE9Gb2JnZW8wRDlnVFh4Z0g0bDRVanloSnBsVlcyeGFHVk86RUljQ1NodUQ2NF9QX3BvRklmbGRGUzl4ajd0X3dmS0RUU3pXQ2FPeTh5OEpVdHNaOUEzcHA5ZmNnUGZXY3FpVVd3MDFCT1Bsel82RFdwVXQ="
+          "Authorization": "Basic " + encodedString
         },
         "form": {
           "grant_type": "client_credentials"
@@ -450,7 +478,14 @@ router.post('/escalate', (req, res, next) => {
 
 });
 
-router.post('/makeOffer', (req, res, next) => {
+router.post('/makeOffer', ensureAuthenticated, (req, res, next) => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  let stringToEncode = client_id + ":" + client_secret;
+
+  const encodedString = encode.encode(stringToEncode, 'base64');
+
   const title = "Make Offer";
   const dispute_id = req.body.dispute_id;
   const note = req.body.note;
@@ -464,7 +499,7 @@ router.post('/makeOffer', (req, res, next) => {
         "uri": "https://api.sandbox.paypal.com/v1/oauth2/token",
         "json": true,
         "headers": {
-          "Authorization": "Basic QWZfT3BhYnVFQ3NOZlU2QXpMZjFQVDIxM2IzQkdBeTZDUkphNUlFcjNodGVZbE9Gb2JnZW8wRDlnVFh4Z0g0bDRVanloSnBsVlcyeGFHVk86RUljQ1NodUQ2NF9QX3BvRklmbGRGUzl4ajd0X3dmS0RUU3pXQ2FPeTh5OEpVdHNaOUEzcHA5ZmNnUGZXY3FpVVd3MDFCT1Bsel82RFdwVXQ="
+          "Authorization": "Basic " + encodedString
         },
         "form": {
           "grant_type": "client_credentials"

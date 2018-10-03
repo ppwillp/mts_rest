@@ -48,11 +48,11 @@ require('./models/User');
 
 const User = mongoose.model('users');
 
-paypal.configure({
+/*paypal.configure({
   'mode': 'sandbox',
   'client_id': 'Af_OpabuECsNfU6AzLf1PT213b3BGAy6CRJa5IEr3hteYlOFobgeo0D9gTXxgH4l4UjyhJplVW2xaGVO',
   'client_secret': 'EIcCShuD64_P_poFIfldFS9xj7t_wfKDTSzWCaOy8y8JUtsZ9A3pp9fcgPfWcqiUWw01BOPlz_6DWpUt'
-});
+});*/
 
 //*********MIDDLEWARE*********//
 
