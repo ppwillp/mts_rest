@@ -26,7 +26,7 @@ function getCreds(req) {
   return paypal;
 }
 
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
   const title = "Create Payment";
   const endpoint = "/v1/payments/payment";
   res.render('payments/index', {
