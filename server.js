@@ -116,6 +116,6 @@ app.use('/sync', sync);
 app.use('/subscriptions', subscriptions);
 app.use('/disputes', disputes);
 
-app.listen(port, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server started on port ${port}`);
 })
