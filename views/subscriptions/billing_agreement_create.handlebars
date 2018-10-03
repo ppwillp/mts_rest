@@ -28,7 +28,7 @@
 </div>
 
 <script>
-  var jsonString = '{"name": "Fast Speed Agreement","description": "Agreement for Fast Speed Plan","start_date": "","plan": {"id": "ENTER PLAN ID HERE"},"payer": {"payment_method": "paypal"},"shipping_address": {"line1": "StayBr111idge Suites","line2": "Cro12ok Street","city": "San Jose","state": "CA","postal_code": "95112","country_code": "US"}}';
+  var jsonString = '{"name": "Fast Speed Agreement","description": "Agreement for Fast Speed Plan","start_date": "","plan": {"id": "ENTER PLAN ID HERE"},"payer": {"payment_method": "paypal"},"shipping_address": {"line1": "StayBr111idge Suites","line2": "Cro12ok Street","city": "San Jose","state": "CA","postal_code": "95112","country_code": "US"}, "override_merchant_preferences": {"return_url": "https://guarded-brook-41995.herokuapp.com/subscriptions/billing_agreement_execute", "cancel_url": "https://guarded-brook-41995.herokuapp.com/subscriptions/billing_agreement_create"}}';
 
   function setText(jsonString) {
     var jsonObj = JSON.parse(jsonString);
