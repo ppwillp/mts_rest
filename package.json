@@ -25,6 +25,7 @@
     "flash": "^1.1.0",
     "handlebars.moment": "^1.0.4",
     "mongoose": "^5.2.14",
+    "nodejs-base64-encode": "0.0.2",
     "nodemon": "^1.18.4",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",

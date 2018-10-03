@@ -2,15 +2,26 @@ const express = require('express');
 const router = express.Router();
 const paypal = require('paypal-rest-sdk');
 const request = require('request-promise');
+const encode = require('nodejs-base64-encode');
 
-router.get('/', (req, res) => {
+//load Authentication Helper
+const {ensureAuthenticated} = require('../helpers/auth');
+
+router.get('/', ensureAuthenticated, (req, res) => {
   res.render('disputes/index', {
     title: "Customer Disputes API",
     endpoint: "/v1/customer/disputes"
   });
 });
 
-router.post('/listDisputes', (req, res, next) => {
+router.post('/listDisputes', ensureAuthenticated, (req, res, next) => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+let stringToEncode = client_id + ":" + client_secret;
+
+const encodedString = encode.encode(stringToEncode, 'base64');
+
   var disputeReq = {
     getToken: function() {
       return request({
@@ -18,7 +29,7 @@ router.post('/listDisputes', (req, res, next) => {
         "uri": "https://api.sandbox.paypal.com/v1/oauth2/token",
         "json": true,
         "headers": {
-          "Authorization": "Basic QWZfT3BhYnVFQ3NOZlU2QXpMZjFQVDIxM2IzQkdBeTZDUkphNUlFcjNodGVZbE9Gb2JnZW8wRDlnVFh4Z0g0bDRVanloSnBsVlcyeGFHVk86RUljQ1NodUQ2NF9QX3BvRklmbGRGUzl4ajd0X3dmS0RUU3pXQ2FPeTh5OEpVdHNaOUEzcHA5ZmNnUGZXY3FpVVd3MDFCT1Bsel82RFdwVXQ="
+          "Authorization": "Basic " + encodedString
           },
         "form": {
           "grant_type": "client_credentials"
