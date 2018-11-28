@@ -23,6 +23,10 @@ const UserSchema = new schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  webhook_id: {
+    type: String,
+    required: false
   }
 });
 
