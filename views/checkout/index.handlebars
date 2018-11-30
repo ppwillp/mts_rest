@@ -299,6 +299,16 @@ function layoutChanged(obj) {
                         var jsonString = JSON.stringify(res, null, 2);
                         response.value = jsonString;
                       });
+                  },
+
+                  onError: function(err) {
+                    console.log("onError: ");
+                    console.log(err);
+                    
+                  },
+
+                  onCancel: function(data, actions) {
+                    console.log("onCancel:");
                   }
                 }, '#paypal-button');
       } else {
@@ -348,6 +358,15 @@ function layoutChanged(obj) {
                         var jsonString = JSON.stringify(res, null, 2);
                         response.value = jsonString;
                       });
+                  },
+
+                  onError: function(err) {
+                    console.log("onError: ");
+                    console.log(err);
+                  },
+
+                  onCancel: function(data, actions) {
+                    console.log("onCancel");
                   }
                 }, '#paypal-button');
               
