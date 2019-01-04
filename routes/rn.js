@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
   res.render("rn/index");
 });
 
-router.post("/paypal", (req, res) => {
+router.get("/paypal", (req, res) => {
   const create_payment_json = {
     intent: "sale",
     payer: {
