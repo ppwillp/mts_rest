@@ -1,0 +1,70 @@
+{{> _jumbotron}}
+
+<h1>V2 test</h1>
+<div id="paypal-button-container"></div>
+
+<div id="formDiv"></div>
+<script>
+    paypal.Button.render({
+
+        env: 'sandbox', // sandbox | production
+
+        // Show the buyer a 'Pay Now' button in the checkout flow
+        commit: true,
+
+        // payment() is called when the button is clicked
+        payment: function () {
+
+            // Set up a url on your server to create the payment
+            var CREATE_URL = '/v2/create';
+
+            // Make a call to your server to set up the payment
+            return paypal.request.post(CREATE_URL)
+                .then(function (res) {
+                    console.log(res);
+                    return res.id;
+                });
+        },
+
+        // onAuthorize() is called when the buyer approves the payment
+        onAuthorize: function (data, actions) {
+
+            // Set up a url on your server to execute the payment
+            var EXECUTE_URL = '/v2/authorize';
+
+            // Set up the data you need to pass to your server
+            var data = {
+                orderID: data.orderID
+            };
+            console.log(data.orderID);
+            // Make a call to your server to execute the payment
+            return paypal.request.post(EXECUTE_URL, data)
+                .then(function (res) {
+                    console.log(res);
+
+                    //create form
+
+                    let form = document.createElement("form");
+                    form.setAttribute('method', "post");
+                    form.setAttribute('action', '/v2/capture');
+
+                    let input = document.createElement("input");
+                    input.setAttribute('type', "text");
+                    input.setAttribute('name', 'authID');
+                    input.setAttribute('value', res);
+
+                    let btn = document.createElement("input");
+                    btn.setAttribute('type', 'submit');
+                    btn.setAttribute('value', 'Capture');
+
+                    form.appendChild(input);
+                    form.appendChild(btn);
+
+                    document.getElementById("formDiv").appendChild(form);
+
+
+                });
+        }
+
+    }, '#paypal-button-container'); 
+</script>

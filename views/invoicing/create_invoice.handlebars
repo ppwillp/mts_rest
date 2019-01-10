@@ -1,0 +1,187 @@
+{{> _jumbotron}}
+<div class="row">
+    <div class="col-md-6">
+        <a href="https://developer.paypal.com/docs/api/invoicing/v1/#invoices_create" target="blank">
+            <h5>Invoicing API</h5>
+        </a>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <a href="/invoicing">
+            <h5>Back to Invoicing</h5>
+        </a>
+    </div>
+</div>
+<br><br>
+<h3>Create Invoice</h3>
+<br><br>
+<div class="row">
+    <div class='col-md-6'>
+        <form method="POST" action="/invoicing/create">
+            <div class="form-group">
+                <label for="json">Create Invoice</label>
+                <textarea class="form-control rounded-0" id="json" name="json" rows="30" cols="200">
+
+            </textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+<h3>Send Invoice</h3>
+<div class="row">
+    <div class="col-md-6">
+
+        <form method="POST" action="/invoicing/send">
+            <div class="form-group">
+                <label for="invoice_id">Invoice ID</label>
+                <input class="form-control rounded-0" type="text" name="invoice_id" value={{invoice_id}}>
+            </div>
+            <button type="submit" class='btn btn-primary'>Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">HTTP Status Code</label>
+        <input class="form-control rounded-0" name="response" value="{{sendHTTPStatusCode}}{{errorResponseSend}}" />
+    </div>
+</div>
+<br><br>
+
+<h3>Cancel Sent Invoice</h3>
+<div class="row">
+    <div class='col-md-6'>
+        <form method="post" action="/invoicing/cancel">
+            <div class="form-group">
+                <label for="invoice_id">Invoice ID (cannot be in DRAFT status)</label>
+                <input type="text" class="form-control rounded-0" name="invoice_id" value="{{invoice_id}}">
+                <label for="json">Cancel Invoice</label>
+                <textarea class="form-control rounded-0" name="json" rows="30" cols="200">
+{
+    "subject": "Invoice canceled",
+    "note": "Canceling this invoice per your request.",
+    "send_to_merchant": true,
+    "send_to_payer": true,
+    "cc_emails": [
+        "cc-email@example.com"
+    ]
+}
+                </textarea>
+            </div>
+            <button type="submit" class='btn btn-primary'>Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">HTTP Status Code</label>
+        <input type="text" name="response" class="form-control rounded-0" value="{{cancelPaymentHTTPStatusCode}}{{cancelErrorResponse}}" />
+    </div>
+</div>
+<br><br>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>List Invoice Templates</h3>
+        <form method="POST" action="/invoicing/list_templates">
+            <button type="submit" class="btn btn-success">/v1/invoicing/templates</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{paymentInfoTemplateList}}{{errorResponseTemplateList}}</textarea>
+    </div>
+</div>
+<br><br>
+<script>
+    let textarea = document.getElementById('json');
+    let jsonString = `{
+    "merchant_info": {
+    "email": "",
+    "first_name": "Test",
+    "last_name": "Merchant",
+    "business_name": "Mitchell & Murray",
+    "phone": {
+      "country_code": "001",
+      "national_number": "4085551234"
+    },
+    "address": {
+      "line1": "1234 First Street",
+      "city": "Anytown",
+      "state": "CA",
+      "postal_code": "98765",
+      "country_code": "US"
+    }
+  },
+  "billing_info": [
+    {
+      "email": "bill-me@example.com",
+      "first_name": "Stephanie",
+      "last_name": "Meyers"
+    }
+  ],
+  "shipping_info": {
+    "first_name": "Stephanie",
+    "last_name": "Meyers",
+    "address": {
+      "line1": "1234 Main Street",
+      "city": "Anytown",
+      "state": "CA",
+      "postal_code": "98765",
+      "country_code": "US"
+    }
+  },
+  "items": [
+    {
+      "name": "Zoom System wireless headphones",
+      "quantity": 2,
+      "unit_price": {
+        "currency": "USD",
+        "value": "120"
+      },
+      "tax": {
+        "name": "Tax",
+        "percent": 8
+      }
+    },
+    {
+      "name": "Bluetooth speaker",
+      "quantity": 1,
+      "unit_price": {
+        "currency": "USD",
+        "value": "145"
+      },
+      "tax": {
+        "name": "Tax",
+        "percent": 8
+      }
+    }
+  ],
+  "discount": {
+    "percent": 1
+  },
+  "shipping_cost": {
+    "amount": {
+      "currency": "USD",
+      "value": "10"
+    }
+  },
+  "note": "Thank you for your business.",
+  "terms": "No refunds after 30 days.",
+  "template_id": ""
+}`;
+
+    let setTextArea = (jsonString) => {
+        let jsonObj = JSON.parse(jsonString);
+        let email = "{{{email}}}";
+        jsonObj.merchant_info.email = email;
+
+        let newString = JSON.stringify(jsonObj, null, 2);
+        textarea.value = newString;
+    }
+    setTextArea(jsonString);
+</script>

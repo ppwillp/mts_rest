@@ -1,0 +1,75 @@
+{{> _jumbotron}}
+<div class="row">
+    <div class="col-md-6">
+        <a href="https://developer.paypal.com/docs/api/invoicing/v1/#invoices" target="blank">
+            <h5>Invoicing API</h5>
+        </a>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <a href="/invoicing">
+            <h5>Back to Invoicing</h5>
+        </a>
+    </div>
+</div>
+<br><br>
+
+<h3>List Invoices</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="get" action="/invoicing/list_invoices">
+            <button type="submit" class="btn btn-success mt-3">/v1/invoicing/invoices</button>
+
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Resonse</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{listResponse}}{{listErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Show Invoice Details</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/invoicing/show_details">
+            <div class="form-group">
+                <label for="invoice_id">Invoice ID</label>
+                <input class="form-control rounded-0" name="invoice_id" value="">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{invoiceInfo}}{{invoiceInfoErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Genereate QR Code</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/invoicing/qr_code">
+            <div class="form-group">
+                <label for="invoice_id">Invoice ID</label>
+                <input type="text" class="form-control rounded-0" name="invoice_id" value="" />
+                <label for="width">Width (optional)</label>
+                <input type="text" class="form-control rounded-0" name="width" value="500" />
+                <label for="height">Height (optional)</label>
+                <input type="text" class="form-control rounded-0" name="height" value="500" />
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        <div>
+            <img src="data:image/png;base64, {{qrCodeText}}" alt="qr Code">
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{qrCode}}{{qrCodeErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>

@@ -23,6 +23,8 @@ const sync = require("./routes/sync");
 const subscriptions = require("./routes/subscriptions");
 const disputes = require("./routes/disputes");
 const rn = require("./routes/rn");
+const v2 = require("./routes/v2");
+const invoice = require("./routes/invoicing");
 
 //Passport config
 require("./config/passport")(passport);
@@ -126,6 +128,8 @@ app.use("/sync", sync);
 app.use("/subscriptions", subscriptions);
 app.use("/disputes", disputes);
 app.use("/rn", rn);
+app.use("/v2", v2);
+app.use("/invoicing", invoice);
 
 app.listen(process.env.PORT || port, () => {
   console.log(`Server started on port ${port}`);

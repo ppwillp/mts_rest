@@ -1,0 +1,123 @@
+{{> _jumbotron}}
+<div class="row">
+    <div class="col-md-6">
+        <a href="https://developer.paypal.com/docs/api/invoicing/v1/#templates_create" target="blank">
+            <h5>Invoicing API</h5>
+        </a>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <a href="/invoicing">
+            <h5>Back to Invoicing</h5>
+        </a>
+    </div>
+</div>
+<br><br>
+<h3>Create Invoice Template</h3>
+<br><br>
+<div class="row">
+    <div class='col-md-6'>
+        <form method="POST" action="/invoicing/create_template">
+            <div class="form-group">
+                <label for="json">Create Invoice Template</label>
+                <textarea class="form-control rounded-0" id="json" name="json" rows="30" cols="200">
+
+            </textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Show Template Details</h3>
+<br><br>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/invoicing/template_details">
+            <div class="form-group">
+                <label for="template_id">Template ID</label>
+                <input type="text" class="form-control rounded-0" name="template_id" value="{{template_id}}">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{templateInfo}}{{templateInfoErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<script>
+    let textarea = document.getElementById('json');
+    let email = "{{{email}}}";
+    let jsonString = `{
+  "name": "Hours Template",
+  "default": true,
+  "unit_of_measure": "HOURS",
+  "template_data": {
+    "merchant_info": {
+      "email": "",
+      "first_name": "Dennis",
+      "last_name": "Doctor",
+      "business_name": "Medical Professionals, LLC",
+      "phone": {
+        "country_code": "001",
+        "national_number": "5032141716"
+      },
+      "address": {
+        "line1": "1234 Main St.",
+        "city": "Portland",
+        "state": "OR",
+        "postal_code": "97217",
+        "country_code": "US"
+      }
+    },
+    "items": [
+      {
+        "name": "Nutri Bullet",
+        "quantity": 1,
+        "unit_price": {
+          "currency": "USD",
+          "value": "50.00"
+        }
+      }
+    ],
+    "tax_calculated_after_discount": false,
+    "tax_inclusive": false,
+    "note": "Thank you for your business.",
+    "logo_url": "https://example.com/v1/images/redDot.jpeg"
+  },
+  "settings": [
+    {
+      "field_name": "items.date",
+      "display_preference": {
+        "hidden": true
+      }
+    },
+    {
+      "field_name": "custom",
+      "display_preference": {
+        "hidden": true
+      }
+    }
+  ]
+}`;
+
+    let setTextArea = (jsonString) => {
+        let jsonObj = JSON.parse(jsonString);
+        jsonObj.template_data.merchant_info.email = email;
+
+        let newString = JSON.stringify(jsonObj, null, 2);
+        textarea.value = newString;
+    }
+    setTextArea(jsonString);
+
+</script>
