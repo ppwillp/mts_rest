@@ -6,6 +6,15 @@ const encode = require("nodejs-base64-encode");
 //load Authentication Helper
 const { ensureAuthenticated } = require("../helpers/auth");
 
+const getCreds = req => {
+  const client_id = req.user.client_id;
+  const client_secret = req.user.client_secret;
+
+  let stringToEncode = `${client_id}:${client_secret}`;
+  let encodedString = encode.encode(stringToEncode, "base64");
+  return encodedString;
+};
+
 router.get("/", ensureAuthenticated, (req, res) => {
   res.render("v2/index", {
     title: "V2 Orders",
@@ -14,6 +23,147 @@ router.get("/", ensureAuthenticated, (req, res) => {
 });
 
 router.post("/create", ensureAuthenticated, (req, res, next) => {
+  let paymentString = req.body.json;
+  paymentString = paymentString.replace(/\s/g, "");
+  let paymentObj = JSON.parse(paymentString);
+  console.log(paymentObj);
+  let create = {
+    getToken: function() {
+      return request({
+        method: "POST",
+        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
+        json: true,
+        headers: {
+          Authorization: `Basic ${getCreds(req)}`
+        },
+        form: {
+          grant_type: "client_credentials"
+        }
+      });
+    },
+
+    call: function(token) {
+      return request({
+        method: "POST",
+        uri: "https://api.sandbox.paypal.com/v2/checkout/orders",
+        json: true,
+        headers: {
+          Authorization: "Bearer " + token,
+          "content-type": "application/json"
+        },
+        body: paymentObj
+      });
+    }
+  };
+
+  const main = () => {
+    return create
+      .getToken()
+      .then(response => {
+        const token = response.access_token;
+        return token;
+      })
+      .catch(function(e) {
+        console.log(e);
+        throw e;
+      });
+  };
+
+  main().then(response => {
+    create
+      .call(response)
+      .then(response => {
+        console.log(response);
+        let paymentInfo = JSON.stringify(response, null, 2);
+        let id = response.id;
+        let approveUri = "";
+        for (let i = 0; i < response.links.length; i++) {
+          if (response.links[i].rel === "approve") {
+            approveUri = response.links[i].href;
+          }
+        }
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          paymentInfo,
+          id,
+          approveUri
+        });
+      })
+      .catch(err => {
+        let errorResponse = JSON.stringify(err, null, 2);
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          errorResponse
+        });
+      });
+  });
+});
+
+router.post("/capture", ensureAuthenticated, (req, res) => {
+  const order_id = req.body.order_id;
+
+  let capture = {
+    getToken: function(token) {
+      return request({
+        method: "POST",
+        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
+        json: true,
+        headers: {
+          Authorization: `Basic ${getCreds(req)}`
+        },
+        form: {
+          grant_type: "client_credentials"
+        }
+      });
+    },
+    complete: function(token) {
+      return request({
+        method: "POST",
+        uri: `https://api.sandbox.paypal.com/v2/checkout/orders/${order_id}/capture`,
+        json: true,
+        headers: {
+          Authorization: "Bearer " + token,
+          "content-type": "application/json"
+        }
+      });
+    }
+  };
+
+  const main = () => {
+    return capture.getToken().then(response => response.access_token);
+  };
+
+  main().then(response =>
+    capture
+      .complete(response)
+      .then(response => {
+        {
+          let captureInfo = JSON.stringify(response, null, 2);
+          res.render("v2/", {
+            title: "V2 Orders",
+            endpoint: "/v2/checkout/orders",
+            captureInfo
+          });
+        }
+      })
+      .catch(err => {
+        let captureErrorResponse = JSON.stringify(err, null, 2);
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          captureErrorResponse
+        });
+      })
+  );
+});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SPB SPB SPB///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post("/create_spb", ensureAuthenticated, (req, res, next) => {
   const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
 
@@ -85,7 +235,7 @@ router.post("/create", ensureAuthenticated, (req, res, next) => {
   });
 });
 
-router.post("/authorize", ensureAuthenticated, (req, res) => {
+router.post("/authorize_spb", ensureAuthenticated, (req, res) => {
   const orderID = req.body.orderID;
   const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
@@ -138,7 +288,7 @@ router.post("/authorize", ensureAuthenticated, (req, res) => {
   });
 });
 
-router.post("/capture", ensureAuthenticated, (req, res) => {
+router.post("/capture_spb", ensureAuthenticated, (req, res) => {
   const client_id = req.user.client_id;
   const client_secret = req.user.client_secret;
 
@@ -176,9 +326,9 @@ router.post("/capture", ensureAuthenticated, (req, res) => {
     }
   };
 
-  function main() {
+  const main = () => {
     return capture.getToken().then(response => response.access_token);
-  }
+  };
 
   main().then(response => {
     capture
