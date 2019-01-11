@@ -159,6 +159,121 @@ router.post("/capture", ensureAuthenticated, (req, res) => {
   );
 });
 
+router.post("/authorize", ensureAuthenticated, (req, res) => {
+  const auth_id = req.body.auth_id;
+  console.log(auth_id);
+  let authorize = {
+    getToken: function() {
+      return request({
+        method: "POST",
+        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
+        json: true,
+        headers: {
+          Authorization: `Basic ${getCreds(req)}`
+        },
+        form: {
+          grant_type: "client_credentials"
+        }
+      });
+    },
+    complete: function(token) {
+      return request({
+        method: "POST",
+        uri: `https://api.sandbox.paypal.com/v2/checkout/orders/${auth_id}/authorize`,
+        json: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-type": "application/json"
+        }
+      });
+    }
+  };
+
+  const main = () => {
+    return authorize.getToken().then(response => response.access_token);
+  };
+
+  main().then(response =>
+    authorize
+      .complete(response)
+      .then(response => {
+        let authInfo = JSON.stringify(response, null, 2);
+        let authorization_id =
+          response.purchase_units[0].payments.authorizations[0].id;
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          authInfo,
+          authorization_id
+        });
+      })
+      .catch(err => {
+        let authErrorResponse = JSON.stringify(err, null, 2);
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          authErrorResponse
+        });
+      })
+  );
+});
+
+router.post("/capture_authorization", ensureAuthenticated, (req, res) => {
+  const auth_id = req.body.auth_id;
+
+  let capture = {
+    getToken: function() {
+      return request({
+        method: "POST",
+        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
+        json: true,
+        headers: {
+          Authorization: `Basic ${getCreds(req)}`
+        },
+        form: {
+          grant_type: "client_credentials"
+        }
+      });
+    },
+    complete: function(token) {
+      return request({
+        method: "POST",
+        uri: `https://api.sandbox.paypal.com/v2/payments/authorizations/${auth_id}/capture`,
+        json: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-type": "application/json"
+        }
+      });
+    }
+  };
+
+  const main = () => {
+    return capture.getToken().then(response => response.access_token);
+  };
+
+  main().then(response =>
+    capture
+      .complete(response)
+      .then(response => {
+        let captureAuthInfo = JSON.stringify(response, null, 2);
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          captureAuthInfo
+        });
+      })
+      .catch(err => {
+        let captureAuthErrorResponse = JSON.stringify(err, null, 2);
+        res.render("v2/", {
+          title: "V2 Orders",
+          endpoint: "/v2/checkout/orders",
+          captureAuthErrorResponse
+        });
+      })
+  );
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //SPB SPB SPB///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

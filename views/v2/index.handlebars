@@ -1,5 +1,13 @@
 {{> _jumbotron}}
+<div class="row">
+    <div class="col-md-6">
+        <a href="https://developer.paypal.com/docs/limited-release/orders/api/" target="blank">
+            <h5>Orders V2</h5>
+        </a>
 
+    </div>
+</div>
+<br>
 <h3>V2 SPB Auth-Capture</h3>
 <div id="paypal-button-container"></div>
 
@@ -60,6 +68,42 @@
     <div class="col-md-6">
         <label for="response">Response</label>
         <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{captureInfo}}{{captureErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Authorize Order</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/authorize">
+            <div class="form-group">
+                <label for="auth_id">Authorization ID</label>
+                <input type="text" class="form-control rounded-0" id="auth_id_field" name="auth_id">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{authInfo}}{{authErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Capture Authorization</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/capture_authorization">
+            <div class="form-group">
+                <label for="json">Authorization ID</label>
+                <input type="text" class="form-control rounded-0" name="auth_id" value="{{authorization_id}}">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{captureAuthInfo}}{{captureAuthErrorResponse}}</textarea>
     </div>
 </div>
 <br><br>
@@ -152,6 +196,7 @@
         const token = splitString[0].split('=')[1];
 
         document.getElementById('order_id_field').value = token;
+        document.getElementById('auth_id_field').value = token;
     }
     showRedirectUri();
     isTokenPresent(url);
