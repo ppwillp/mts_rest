@@ -106,7 +106,8 @@ router.post("/:webhook_id", (req, res) => {
       };
 
       let event_body = req.body;
-
+      console.log(event_body);
+      console.log(webhook_id);
       paypal.notification.webhookEvent.verify(
         headers,
         event_body,
