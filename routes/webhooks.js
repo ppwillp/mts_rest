@@ -43,7 +43,7 @@ router.get("/add_webhook_id", ensureAuthenticated, (req, res) => {
 });
 
 router.post("/register", ensureAuthenticated, (req, res) => {
-  getCreds();
+  getCreds(req);
   const webhook_id = req.body.webhook_id;
   console.log(req.user);
   User.findOne({ email: req.user.email }).then(user => {
