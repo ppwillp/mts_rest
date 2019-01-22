@@ -84,13 +84,13 @@ router.post("/:webhook_id", (req, res) => {
     if (error) {
       console.log(error);
     } else {
+      console.log(user);
       paypal.configure({
         mode: "sandbox",
         client_id: user.client_id,
         client_secret: user.client_secret
       });
 
-      console.log(paypal.client_id);
       let authAlgo = req.headers["paypal-auth-algo"];
       let certURL = req.headers["paypal-cert-url"];
       let transmissionId = req.headers["paypal-transmission-id"];
