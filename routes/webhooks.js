@@ -35,6 +35,7 @@ router.get("/", ensureAuthenticated, (req, res) => {
 });
 
 router.get("/add_webhook_id", ensureAuthenticated, (req, res) => {
+  console.log(req.user);
   res.render("webhooks/add_webhook_id", {
     title: "Webhooks",
     endpoint: "Set up a Webhook Listener."
@@ -44,7 +45,7 @@ router.get("/add_webhook_id", ensureAuthenticated, (req, res) => {
 router.post("/register", ensureAuthenticated, (req, res) => {
   getCreds();
   const webhook_id = req.body.webhook_id;
-
+  console.log(req.user);
   User.findOne({ email: req.user.email }).then(user => {
     if (user.webhook_id) {
       req.flash("error_msg", "Webhook ID already registered");
@@ -64,6 +65,7 @@ router.post("/register", ensureAuthenticated, (req, res) => {
               endpoint: "/v1/notifications/webhooks"
             });
           } else {
+            console.log(req.user);
             req.flash("success_msg", "Webhook ID added");
             res.render("webhooks/index", {
               title: "Webhooks",
@@ -78,15 +80,14 @@ router.post("/register", ensureAuthenticated, (req, res) => {
 
 router.post("/:webhook_id", (req, res) => {
   const webhook_id = req.params.webhook_id;
-  User.findOne({ webhook_id }),
-    (err, response) => {
-      if (err) console.log(err);
-      console.log(response);
-
+  User.findOne({ webhook_id }, (error, user) => {
+    if (error) {
+      console.log(error);
+    } else {
       paypal.configure({
         mode: "sandbox",
-        client_id: User.client_id,
-        client_secret: User.client_secret
+        client_id: user.client_id,
+        client_secret: user.client_secret
       });
 
       console.log(paypal.client_id);
@@ -122,7 +123,8 @@ router.post("/:webhook_id", (req, res) => {
           }
         }
       );
-    };
+    }
+  });
 });
 
 module.exports = router;
