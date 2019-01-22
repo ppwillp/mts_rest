@@ -83,7 +83,7 @@ app.use(function(req, res, next) {
 //Express Session Middleware
 app.use(
   session({
-    store: new MongoStore(options),
+    store: new MongoStore({ url: db.mongoURI }),
     secret: "secret",
     resave: true,
     saveUninitialized: true
