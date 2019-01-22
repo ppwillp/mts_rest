@@ -76,7 +76,7 @@ router.post("/register", ensureAuthenticated, (req, res) => {
   });
 });
 
-router.post("/:webhook_id", ensureAuthenticated, (req, res) => {
+router.post("/:webhook_id", (req, res) => {
   const webhook_id = req.params.webhook_id;
   User.findOne({ webhook_id }),
     (err, response) => {
@@ -89,6 +89,7 @@ router.post("/:webhook_id", ensureAuthenticated, (req, res) => {
         client_secret: User.client_secret
       });
 
+      console.log(paypal.client_id);
       let authAlgo = req.headers["paypal-auth-algo"];
       let certURL = req.headers["paypal-cert-url"];
       let transmissionId = req.headers["paypal-transmission-id"];
