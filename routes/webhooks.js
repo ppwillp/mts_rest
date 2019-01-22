@@ -80,7 +80,7 @@ router.post("/register", ensureAuthenticated, (req, res) => {
 
 router.post("/:webhook_id", (req, res) => {
   const webhook_id = req.params.webhook_id;
-  console.log(req);
+
   let event_body = req.body;
   User.findOne({ webhook_id: webhook_id }, (error, user) => {
     if (error) {
