@@ -10,6 +10,7 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const request = require("request-promise");
 const encode = require("nodejs-base64-encode");
+const MongoStore = require("connect-mongo")(session);
 
 //Routing
 const router = express.Router();
