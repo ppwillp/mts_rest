@@ -77,11 +77,50 @@ router.post("/register", ensureAuthenticated, (req, res) => {
 });
 
 router.post("/:webhook_id", ensureAuthenticated, (req, res) => {
-  getCreds();
+  const webhook_id = req.params.webhook_id;
   User.findOne({ webhook_id }),
     (err, response) => {
       if (err) console.log(err);
       console.log(response);
+
+      paypal.configure({
+        mode: "sandbox",
+        client_id: User.client_id,
+        client_secret: User.client_secret
+      });
+
+      let authAlgo = req.headers["paypal-auth-algo"];
+      let certURL = req.headers["paypal-cert-url"];
+      let transmissionId = req.headers["paypal-transmission-id"];
+      let transmissionSignature = req.headers["paypal-transmission-sig"];
+      let transmissionTimestamp = req.headers["paypal-transmission-time"];
+
+      let headers = {
+        "paypal-auth-algo": authAlgo,
+        "paypal-cert-url": certURL,
+        "paypal-transmission-id": transmissionId,
+        "paypal-transmission-sig": transmissionSignature,
+        "paypal-transmission-time": transmissionTimestamp
+      };
+
+      let event_body = req.body;
+
+      paypal.notification.webhookEvent.verify(
+        headers,
+        event_body,
+        webhook_id,
+        (error, response) => {
+          if (error) {
+            console.log(error);
+          } else {
+            if (response.verification_status === "SUCCESS") {
+              console.log("SUCCESS!");
+            } else {
+              console.log("NOT SUCCESS");
+            }
+          }
+        }
+      );
     };
 });
 
