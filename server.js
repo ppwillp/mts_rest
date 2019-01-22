@@ -25,6 +25,7 @@ const disputes = require("./routes/disputes");
 const rn = require("./routes/rn");
 const v2 = require("./routes/v2");
 const invoice = require("./routes/invoicing");
+const webhooks = require("./routes/webhooks");
 
 //Passport config
 require("./config/passport")(passport);
@@ -130,6 +131,7 @@ app.use("/disputes", disputes);
 app.use("/rn", rn);
 app.use("/v2", v2);
 app.use("/invoicing", invoice);
+app.use("/webhooks", webhooks);
 
 app.listen(process.env.PORT || port, () => {
   console.log(`Server started on port ${port}`);

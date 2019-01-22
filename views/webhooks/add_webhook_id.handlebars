@@ -1,0 +1,19 @@
+{{> _jumbotron}}
+
+
+<div class="mt-3">{{> _modal}}</div>
+
+<div class="row mb-5">
+    <div class="col-md-6 mx-auto">
+        <div class="card card-body">
+            <h3 class="text-center">Register your Webhook ID</h3>
+            <form action="/webhooks/register" method="post">
+                <div class="form-group">
+                    <label for="email">webhook id</label>
+                    <input type="text" class="form-control" name="webhook_id" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
