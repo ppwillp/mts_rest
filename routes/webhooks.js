@@ -80,13 +80,13 @@ router.post("/register", ensureAuthenticated, (req, res) => {
 
 router.post("/:webhook_id", (req, res) => {
   const webhook_id = req.params.webhook_id;
-
   let event_body = req.body;
+  console.log(`req.body = ${req.body}`);
+  console.log(`req.headers = ${req.headers}`);
   User.findOne({ webhook_id: webhook_id }, (error, user) => {
     if (error) {
       console.log(error);
     } else {
-      console.log(user);
       paypal.configure({
         mode: "sandbox",
         client_id: user.client_id,
