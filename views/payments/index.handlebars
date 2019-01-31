@@ -1,19 +1,21 @@
 {{> _jumbotron}}
-<div class = "row">
-  <div class = "col-md-6">
-    <a href = "https://developer.paypal.com/docs/api/payments/v1/" target="blank"><h5>Payments API</h5></a>
+<div class="row">
+  <div class="col-md-6">
+    <a href="https://developer.paypal.com/docs/api/payments/v1/" target="blank">
+      <h5>Payments API</h5>
+    </a>
 
   </div>
 </div>
 <br><br>
 <h3>Create Payment</h3>
 <br></br>
-<div class = "row">
-  <div class = "col-md-6">
-  <form method = "post" action = "/payments/create">
-  <div class = "form-group">
-    <label for="json">Create Payment</label>
-    <textarea class = "form-control rounded-0" name = "json" rows = "30" cols="200">{
+<div class="row">
+  <div class="col-md-6">
+    <form method="post" action="/payments/create">
+      <div class="form-group">
+        <label for="json">Create Payment</label>
+        <textarea class="form-control rounded-0" name="json" rows="30" cols="200">{
         "intent": "sale",
         "payer": {
         "payment_method": "paypal"
@@ -39,41 +41,54 @@
         "description": "This is the payment description."
     }]
   }</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
   </div>
-  <button type = "submit" class = "btn btn-primary">Submit</button>
-  </form>
-</div>
-<div class = "col-md-6">
-  <label for="response">Response</label>
-<textarea class = "form-control rounded-0" name = "response" rows = "30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
-</div>
+  <div class="col-md-6">
+    <label for="response">Response</label>
+    <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+  </div>
 </div>
 
-<div class = "row">
-  <div class = "col-md-4 offset-md-8">
+<div class="row">
+  <div class="col-md-4 offset-md-8">
     <div>
-      <h3><span id = "info"></span></h3>
+      <h3><span id="info"></span></h3>
     </div>
   </div>
 </div>
-<div class = "row">
+<div class="row">
   <br>
-  <h3><span id = "info2"></span></h3>
+  <h3><span id="info2"></span></h3>
+</div>
+
+<div class="row mt-5 mb-5">
+  <div class="col-md-6">
+    <a href="payments/authorizations">
+      <h2>Authorization Operations</h2>
+    </a>
+  </div>
+  <div class="col-md-6">
+    <a href="payments/orders">
+      <h2>Order Operations</h2>
+    </a>
+  </div>
 </div>
 
 <script>
-var url = "{{{link}}}";
-console.log(url);
+  var url = "{{{link}}}";
+  console.log(url);
 
-function addLink() {
-    if(url != "") {
-        var place = document.getElementById("info");
-        var a = document.createElement('a');
-        a.href = url;
-        a.innerHTML = "Redirect to PayPal";
-        place.appendChild(a);
+  function addLink() {
+    if (url != "") {
+      var place = document.getElementById("info");
+      var a = document.createElement('a');
+      a.href = url;
+      a.innerHTML = "Redirect to PayPal";
+      place.appendChild(a);
     }
-}
-addLink();
+  }
+  addLink();
 
 </script>
