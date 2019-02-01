@@ -153,8 +153,7 @@ router.post("/capture", ensureAuthenticated, (req, res) => {
         json: true,
         headers: {
           Authorization: "Bearer " + token,
-          "content-type": "application/json",
-          Prefer: "return=representation"
+          "content-type": "application/json"
         }
       });
     }
@@ -259,8 +258,7 @@ router.post("/capture_authorization", ensureAuthenticated, (req, res) => {
         uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
         json: true,
         headers: {
-          Authorization: `Basic ${getCreds(req)}`,
-          Prefer: "return=representation"
+          Authorization: `Basic ${getCreds(req)}`
         },
         form: {
           grant_type: "client_credentials"
@@ -330,8 +328,7 @@ router.post("/show_order_details", ensureAuthenticated, (req, res) => {
         uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
         json: true,
         headers: {
-          Authorization: `Basic ${getCreds(req)}`,
-          Prefer: "return=representation"
+          Authorization: `Basic ${getCreds(req)}`
         },
         form: {
           grant_type: "client_credentials"
