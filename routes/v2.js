@@ -22,11 +22,40 @@ router.get("/", ensureAuthenticated, (req, res) => {
   });
 });
 
+router.get("/as1", ensureAuthenticated, (req, res) => {
+  res.render("v2/as1", {
+    title: "V2 AS1",
+    endpoint: "/v2/checkout/orders"
+  });
+});
+
+router.get("/as2", ensureAuthenticated, (req, res) => {
+  res.render("v2/as2", {
+    title: "V2 AS2",
+    endpoint: "/v2/checkout/orders"
+  });
+});
+
 router.post("/create", ensureAuthenticated, (req, res, next) => {
   let paymentString = req.body.json;
   paymentString = paymentString.replace(/\s/g, "");
   let paymentObj = JSON.parse(paymentString);
-  console.log(paymentObj);
+
+  const intent = paymentObj.intent;
+  let renderString = "";
+  let title = "";
+  let endpoint = "";
+
+  if (intent === "AUTHORIZE") {
+    renderString = "v2/as1";
+    title = "V2 AS1";
+    endpoint = "/v2/checkout/orders/{order_id}/authorize";
+  } else {
+    renderString = "v2/as2";
+    title = "V2 AS2";
+    endpoint = "/v2/checkout/orders/{order_id}/capture";
+  }
+
   let create = {
     getToken: function() {
       return request({
@@ -64,7 +93,6 @@ router.post("/create", ensureAuthenticated, (req, res, next) => {
         return token;
       })
       .catch(function(e) {
-        console.log(e);
         throw e;
       });
   };
@@ -73,7 +101,6 @@ router.post("/create", ensureAuthenticated, (req, res, next) => {
     create
       .call(response)
       .then(response => {
-        console.log(response);
         let paymentInfo = JSON.stringify(response, null, 2);
         let id = response.id;
         let approveUri = "";
@@ -82,9 +109,10 @@ router.post("/create", ensureAuthenticated, (req, res, next) => {
             approveUri = response.links[i].href;
           }
         }
-        res.render("v2/", {
-          title: "V2 Orders",
-          endpoint: "/v2/checkout/orders",
+
+        res.render(renderString, {
+          title,
+          endpoint,
           paymentInfo,
           id,
           approveUri
@@ -92,9 +120,9 @@ router.post("/create", ensureAuthenticated, (req, res, next) => {
       })
       .catch(err => {
         let errorResponse = JSON.stringify(err, null, 2);
-        res.render("v2/", {
-          title: "V2 Orders",
-          endpoint: "/v2/checkout/orders",
+        res.render(renderString, {
+          title,
+          endpoint,
           errorResponse
         });
       });
@@ -125,7 +153,8 @@ router.post("/capture", ensureAuthenticated, (req, res) => {
         json: true,
         headers: {
           Authorization: "Bearer " + token,
-          "content-type": "application/json"
+          "content-type": "application/json",
+          Prefer: "return=representation"
         }
       });
     }
@@ -141,17 +170,19 @@ router.post("/capture", ensureAuthenticated, (req, res) => {
       .then(response => {
         {
           let captureInfo = JSON.stringify(response, null, 2);
-          res.render("v2/", {
-            title: "V2 Orders",
+          let order_id = response.id;
+          res.render("v2/as2", {
+            title: "V2 AS2",
             endpoint: "/v2/checkout/orders",
-            captureInfo
+            captureInfo,
+            order_id
           });
         }
       })
       .catch(err => {
         let captureErrorResponse = JSON.stringify(err, null, 2);
-        res.render("v2/", {
-          title: "V2 Orders",
+        res.render("v2/as2", {
+          title: "V2 AS2",
           endpoint: "/v2/checkout/orders",
           captureErrorResponse
         });
@@ -161,7 +192,7 @@ router.post("/capture", ensureAuthenticated, (req, res) => {
 
 router.post("/authorize", ensureAuthenticated, (req, res) => {
   const auth_id = req.body.auth_id;
-  console.log(auth_id);
+
   let authorize = {
     getToken: function() {
       return request({
@@ -200,18 +231,18 @@ router.post("/authorize", ensureAuthenticated, (req, res) => {
         let authInfo = JSON.stringify(response, null, 2);
         let authorization_id =
           response.purchase_units[0].payments.authorizations[0].id;
-        res.render("v2/", {
-          title: "V2 Orders",
-          endpoint: "/v2/checkout/orders",
+        res.render("v2/as1", {
+          title: "V2 AS1",
+          endpoint: "/v2/checkout/orders/{order_id}/authorize",
           authInfo,
           authorization_id
         });
       })
       .catch(err => {
         let authErrorResponse = JSON.stringify(err, null, 2);
-        res.render("v2/", {
-          title: "V2 Orders",
-          endpoint: "/v2/checkout/orders",
+        res.render("v2/as1", {
+          title: "V2 AS1",
+          endpoint: "/v2/checkout/orders/{order_id}/authorize",
           authErrorResponse
         });
       })
@@ -228,7 +259,8 @@ router.post("/capture_authorization", ensureAuthenticated, (req, res) => {
         uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
         json: true,
         headers: {
-          Authorization: `Basic ${getCreds(req)}`
+          Authorization: `Basic ${getCreds(req)}`,
+          Prefer: "return=representation"
         },
         form: {
           grant_type: "client_credentials"
@@ -257,16 +289,19 @@ router.post("/capture_authorization", ensureAuthenticated, (req, res) => {
       .complete(response)
       .then(response => {
         let captureAuthInfo = JSON.stringify(response, null, 2);
-        res.render("v2/", {
-          title: "V2 Orders",
+        let order_id = response.id;
+
+        res.render("v2/as1", {
+          title: "V2 AS1",
           endpoint: "/v2/checkout/orders",
-          captureAuthInfo
+          captureAuthInfo,
+          order_id
         });
       })
       .catch(err => {
         let captureAuthErrorResponse = JSON.stringify(err, null, 2);
-        res.render("v2/", {
-          title: "V2 Orders",
+        res.render("v2/as1", {
+          title: "V2 AS1",
           endpoint: "/v2/checkout/orders",
           captureAuthErrorResponse
         });
@@ -274,167 +309,42 @@ router.post("/capture_authorization", ensureAuthenticated, (req, res) => {
   );
 });
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//SPB SPB SPB///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.post("/show_order_details", ensureAuthenticated, (req, res) => {
+  let order_id = req.body.order_id;
 
-router.post("/create_spb", ensureAuthenticated, (req, res, next) => {
-  const client_id = req.user.client_id;
-  const client_secret = req.user.client_secret;
-
-  let stringToEncode = client_id + ":" + client_secret;
-
-  const encodedString = encode.encode(stringToEncode, "base64");
-
-  let createAuth = {
-    getToken: function() {
-      return request({
-        method: "POST",
-        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
-        json: true,
-        headers: {
-          Authorization: "Basic " + encodedString
-        },
-        form: {
-          grant_type: "client_credentials"
-        }
-      });
-    },
-
-    call: function(token) {
-      return request({
-        method: "POST",
-        uri: "https://api.sandbox.paypal.com/v2/checkout/orders",
-        json: true,
-        headers: {
-          Authorization: "Bearer " + token,
-          "content-type": "application/json"
-        },
-        body: {
-          intent: "AUTHORIZE",
-          purchase_units: [
-            {
-              amount: {
-                currency_code: "USD",
-                value: "1.00"
-              }
-            }
-          ]
-        }
-      });
-    }
-  };
-
-  function main() {
-    return createAuth
-      .getToken()
-      .then(response => {
-        const token = response.access_token;
-        return token;
-      })
-      .catch(function(e) {
-        console.log(e);
-        throw e;
-      });
+  let referer = req.body.referer;
+  let title,
+    endpoint = "";
+  if (referer === "as1") {
+    title = "V2 AS1";
+    endpoint = "/v2/checkout/orders/{order_id}";
+  } else {
+    title = "V2 AS2";
+    endpoint = "/v2/checkout/orders/{order_id}";
   }
 
-  main().then(response => {
-    createAuth
-      .call(response)
-      .then(response => {
-        let id = response.id;
-        console.log(response);
-        res.send(response);
-      })
-      .catch(err => console.log(err));
-  });
-});
-
-router.post("/authorize_spb", ensureAuthenticated, (req, res) => {
-  const orderID = req.body.orderID;
-  const client_id = req.user.client_id;
-  const client_secret = req.user.client_secret;
-
-  let stringToEncode = client_id + ":" + client_secret;
-
-  const encodedString = encode.encode(stringToEncode, "base64");
-
-  let authorizeOrder = {
+  let order = {
     getToken: function() {
       return request({
         method: "POST",
         uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
         json: true,
         headers: {
-          Authorization: "Basic " + encodedString
+          Authorization: `Basic ${getCreds(req)}`,
+          Prefer: "return=representation"
         },
         form: {
           grant_type: "client_credentials"
         }
       });
     },
-
-    captureAuth: function(token) {
+    getDetails: function(token) {
       return request({
-        method: "POST",
-        uri: `https://api.sandbox.paypal.com/v2/checkout/orders/${orderID}/authorize`,
+        method: "GET",
+        uri: `https://api.sandbox.paypal.com/v2/checkout/orders/${order_id}`,
         json: true,
         headers: {
-          Authorization: "Bearer " + token,
-          "content-type": "application/json"
-        }
-      });
-    }
-  };
-
-  function main() {
-    return authorizeOrder.getToken().then(response => response.access_token);
-  }
-
-  main().then(response => {
-    authorizeOrder.captureAuth(response).then(response => {
-      console.log(JSON.stringify(response, null, 2));
-      console.log(
-        "AUTH ID: " + response.purchase_units[0].payments.authorizations[0].id
-      );
-      let authID = response.purchase_units[0].payments.authorizations[0].id;
-      res.send(authID);
-    });
-  });
-});
-
-router.post("/capture_spb", ensureAuthenticated, (req, res) => {
-  const client_id = req.user.client_id;
-  const client_secret = req.user.client_secret;
-
-  let stringToEncode = client_id + ":" + client_secret;
-
-  const encodedString = encode.encode(stringToEncode, "base64");
-  const authID = req.body.authID;
-  console.log(`authID: ${authID}`);
-
-  let capture = {
-    getToken: function() {
-      return request({
-        method: "POST",
-        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
-        json: true,
-        headers: {
-          Authorization: "Basic " + encodedString
-        },
-        form: {
-          grant_type: "client_credentials"
-        }
-      });
-    },
-
-    complete: function(token) {
-      return request({
-        method: "POST",
-        uri: `https://api.sandbox.paypal.com/v2/payments/authorizations/${authID}/capture`,
-        json: true,
-        headers: {
-          Authorization: "Bearer " + token,
+          Authorization: `Bearer ${token}`,
           "content-type": "application/json"
         }
       });
@@ -442,22 +352,33 @@ router.post("/capture_spb", ensureAuthenticated, (req, res) => {
   };
 
   const main = () => {
-    return capture.getToken().then(response => response.access_token);
+    return order.getToken().then(response => response.access_token);
   };
 
   main().then(response => {
-    capture
-      .complete(response)
-      .then(response => {
-        console.log(response);
-        let paymentInfo = JSON.stringify(response, null, 2);
-        res.render("v2/success", {
-          title: "Order captured",
-          paymentInfo: paymentInfo
+    order
+      .getDetails(response)
+      .then(data => {
+        let order_details_info = JSON.stringify(data, null, 2);
+        res.render(`v2/${referer}`, {
+          title,
+          endpoint,
+          order_details_info
         });
       })
-      .catch(err => res.json(err));
+      .catch(err => {
+        let order_detais_ErrorResponse = JSON.stringify(err, null, 2);
+        res.render(`v2/${referer}`, {
+          title,
+          endpoint,
+          order_detais_ErrorResponse
+        });
+      });
   });
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SPB SPB SPB///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports = router;

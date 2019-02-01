@@ -1,0 +1,133 @@
+{{> _jumbotron}}
+<div class="row">
+    <div class="col-md-6">
+        <a href="https://developer.paypal.com/docs/limited-release/orders/api/#orders_authorize" target="blank">
+            <h5>Orders V2</h5>
+        </a>
+
+    </div>
+</div>
+
+<h3>Create Order</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/create">
+            <div class="form-group">
+                <label for="json">Create Order</label>
+                <textarea class="form-control rounded-0" name="json" rows="30" cols="200">
+{
+  "intent": "AUTHORIZE",
+  "purchase_units": [
+    {
+      "amount": {
+        "currency_code": "USD",
+        "value": "1.00"
+      }
+    }
+  ],
+  "application_context": {
+     "return_url": "https://guarded-brook-41995.herokuapp.com/v2/as1",
+     "cancel_url": "https://guarded-brook-41995.herokuapp.com/v2/as1"
+  }
+}
+
+                </textarea>
+                <!-- return https://guarded-brook-41995.herokuapp.com/v2/as1 -->
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-6 offset-md-6">
+        <span id="uriLocation"></span>
+    </div>
+</div>
+<br>
+
+<h3>Authorize Order</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/authorize">
+            <div class="form-group">
+                <label for="auth_id">Authorization ID</label>
+                <input type="text" class="form-control rounded-0" id="auth_id_field" name="auth_id">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{authInfo}}{{authErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Capture Authorization</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/capture_authorization">
+            <div class="form-group">
+                <label for="json">Authorization ID</label>
+                <input type="text" class="form-control rounded-0" name="auth_id" value="{{{authorization_id}}}">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{captureAuthInfo}}{{captureAuthErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Show Order Details</h3>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/show_order_details">
+            <div class="form-group">
+                <label for="json">Order ID</label>
+                <input type="text" class="form-control rounded-0" name="order_id" value="{{{order_id}}}">
+            </div>
+            <input type="hidden" name="referer" value="as1">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{order_details_info}}{{order_detais_ErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<script>
+    let uri = "{{{approveUri}}}";
+
+    const showRedirectUri = () => {
+        if (uri != "") {
+            document.getElementById("uriLocation").innerHTML = `<a href = "${uri}"><h3>Redirect To PayPal</h3></a>`;
+        }
+    }
+
+    let url = window.location.href;
+
+    const isTokenPresent = (url) => {
+
+        let queryString = url.split('?')[1];
+
+        let splitString = queryString.split('&');
+
+        const token = splitString[0].split('=')[1];
+        console.log(token);
+
+        document.getElementById('auth_id_field').value = token;
+    }
+
+    showRedirectUri();
+    isTokenPresent(url);
+</script>

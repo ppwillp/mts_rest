@@ -27,6 +27,7 @@ const rn = require("./routes/rn");
 const v2 = require("./routes/v2");
 const invoice = require("./routes/invoicing");
 const webhooks = require("./routes/webhooks");
+const jsSDK = require("./routes/jsSDK");
 
 //Passport config
 require("./config/passport")(passport);
@@ -39,10 +40,7 @@ const db = require("./config/database");
 //use promise to connect and catch an err
 
 mongoose
-  .connect(
-    db.mongoURI,
-    { useNewUrlParser: true }
-  )
+  .connect(db.mongoURI, { useNewUrlParser: true })
   .then(() => console.log("MongoDB connected..."))
   .catch(err => console.log(err));
 //
@@ -134,6 +132,7 @@ app.use("/rn", rn);
 app.use("/v2", v2);
 app.use("/invoicing", invoice);
 app.use("/webhooks", webhooks);
+app.use("/js_sdk", jsSDK);
 
 app.listen(process.env.PORT || port, () => {
   console.log(`Server started on port ${port}`);

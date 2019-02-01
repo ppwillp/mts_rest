@@ -1,0 +1,25 @@
+<script src="https://www.paypal.com/sdk/js?client-id=Af_OpabuECsNfU6AzLf1PT213b3BGAy6CRJa5IEr3hteYlOFobgeo0D9gTXxgH4l4UjyhJplVW2xaGVO&integration-date=2019-02-01"></script>
+{{> _jumbotron}}
+
+<div id="paypal-button"></div>
+
+<script>
+
+    paypal.Buttons({
+        createOrder: (data, actions) => {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '1.00'
+                    }
+                }]
+            });
+        },
+        onApprove: (data, actions) => {
+            return actions.order.capture()
+                .then((details) => {
+                    alert(`Transaction completed by ${details.payer.name.given_name}`);
+                });
+        }
+    }).render('paypal-button'); 
+</script>
