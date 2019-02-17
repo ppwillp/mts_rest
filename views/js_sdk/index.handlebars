@@ -1,25 +1,84 @@
-<script src="https://www.paypal.com/sdk/js?client-id=Af_OpabuECsNfU6AzLf1PT213b3BGAy6CRJa5IEr3hteYlOFobgeo0D9gTXxgH4l4UjyhJplVW2xaGVO&integration-date=2019-02-01"></script>
+<script src="https://www.paypal.com/sdk/js?client-id={{client_id}}&commit=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/ace.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.2/mode-javascript.js"></script>
+<script src="src/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+
 {{> _jumbotron}}
+<div class="row">
+    <div class="col-md-6">
+        <a href="https://developer.paypal.com/docs/checkout/integrate/#" target="blank">
+            <h5>SDK Documentation</h5>
+        </a>
 
-<div id="paypal-button"></div>
+    </div>
+</div>
 
+<div class="row mt-5">
+    <div class="col-md-3">
+        <h2>Client Side</h2>
+        <button id="runButton" onclick="update()" class="mb-3 btn btn-success">Generate Button</button>
+
+        <div id="paypal-button"></div>
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div id="editor" style="position:absolute; width:95%; height: 750px;"></div>
+    </div>
+    <div class="col-md-6">
+        <!-- <label for="response">Response</label>-->
+        <textarea class="form-control rounded-0" name="response" id="response" rows="30" cols="200"></textarea>
+    </div>
+</div>
+<br><br>
 <script>
+    let editor = ace.edit("editor");
+    editor.setTheme('ace/theme/twilight');
 
-    paypal.Buttons({
+    let JavaScriptMode = ace.require('ace/mode/javascript').Mode;
+    editor.session.setMode(new JavaScriptMode());
+
+    //default script within ACE editor
+    let defaultContent = `paypal.Buttons({
+        style: {
+            layout: 'vertical', // vertical, horizontal
+            color: 'gold', // gold, blue, silver
+            shape: 'rect', // rect, pill
+            label: 'paypal', // paypal, checkout, pay, installment
+            // height: 25, // 25, 55
+            tagline: false // true, false
+        },
         createOrder: (data, actions) => {
             return actions.order.create({
                 purchase_units: [{
                     amount: {
-                        value: '1.00'
+                        value: "1.00"
                     }
                 }]
             });
         },
         onApprove: (data, actions) => {
-            return actions.order.capture()
-                .then((details) => {
-                    alert(`Transaction completed by ${details.payer.name.given_name}`);
-                });
+            return actions.order.capture().then((details) => {
+                console.log(details);
+                document.querySelector('#response').textContent = JSON.stringify(details, null, 2)
+            });
+        },
+        onError: (err) => {
+            document.querySelector('#response').textContent = JSON.stringify(details, null, 2)
         }
-    }).render('paypal-button'); 
+    }).render('#paypal-button');`;
+
+    editor.setValue(defaultContent, 1);
+
+    let testButton = document.getElementById('runButton');
+
+    function update() {
+        //clear div content if button was already rendered
+        document.getElementById('paypal-button').innerHTML = "";
+        let val = editor.getSession().getValue();
+        eval(val);
+
+    }
+
+
 </script>
