@@ -374,6 +374,84 @@ router.post("/show_order_details", ensureAuthenticated, (req, res) => {
   });
 });
 
+router.post("/refund", ensureAuthenticated, (req, res) => {
+  const order_id = req.body.order_id;
+  let paymentString = req.body.json;
+  const referer = req.body.ref;
+  let title,
+    endpoint = "";
+  if (referer === "as1") {
+    title = "V2 AS1";
+    endpoint = "/v2/checkout/orders/{order_id}";
+  } else {
+    title = "V2 AS2";
+    endpoint = "/v2/checkout/orders/{order_id}";
+  }
+
+  paymentString = paymentString.replace(/\s/g, "");
+  let paymentObj = JSON.parse(paymentString);
+
+  let capture = {
+    getToken: function() {
+      return request({
+        method: "POST",
+        uri: "https://api.sandbox.paypal.com/v1/oauth2/token",
+        json: true,
+        headers: {
+          Authorization: `Basic ${getCreds(req)}`
+        },
+        form: {
+          grant_type: "client_credentials"
+        }
+      });
+    },
+    complete: function(token) {
+      return request({
+        method: "POST",
+        uri: `https://api.sandbox.paypal.com/v2/payments/captures/${order_id}/refund`,
+        json: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "content-type": "application/json"
+        },
+        body: paymentObj
+      });
+    }
+  };
+
+  const main = () => {
+    return capture.getToken().then(response => {
+      console.log(response);
+      console.log(req.user.client_id);
+      return response.access_token;
+    });
+  };
+
+  main().then(response =>
+    capture
+      .complete(response)
+      .then(response => {
+        let order_refund_details = JSON.stringify(response, null, 2);
+        let order_id = response.id;
+
+        res.render(`v2/${referer}`, {
+          title,
+          endpoint,
+          order_refund_details,
+          order_id
+        });
+      })
+      .catch(err => {
+        let order_refund_detais_ErrorResponse = JSON.stringify(err, null, 2);
+        res.render(`v2/${referer}`, {
+          title,
+          endpoint,
+          order_refund_detais_ErrorResponse
+        });
+      })
+  );
+});
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //SPB SPB SPB///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////

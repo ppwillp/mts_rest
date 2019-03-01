@@ -39,7 +39,8 @@
     </div>
     <div class="col-md-6">
         <label for="response">Response</label>
-        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
+        <textarea class="form-control rounded-0" name="response" rows="30"
+            cols="200">{{paymentInfo}}{{errorResponse}}</textarea>
     </div>
 </div>
 <br>
@@ -63,7 +64,8 @@
     </div>
     <div class="col-md-6">
         <label for="response">Response</label>
-        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{authInfo}}{{authErrorResponse}}</textarea>
+        <textarea class="form-control rounded-0" name="response" rows="30"
+            cols="200">{{authInfo}}{{authErrorResponse}}</textarea>
     </div>
 </div>
 <br><br>
@@ -81,7 +83,8 @@
     </div>
     <div class="col-md-6">
         <label for="response">Response</label>
-        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{captureAuthInfo}}{{captureAuthErrorResponse}}</textarea>
+        <textarea class="form-control rounded-0" name="response" rows="30"
+            cols="200">{{captureAuthInfo}}{{captureAuthErrorResponse}}</textarea>
     </div>
 </div>
 <br><br>
@@ -100,7 +103,41 @@
     </div>
     <div class="col-md-6">
         <label for="response">Response</label>
-        <textarea class="form-control rounded-0" name="response" rows="30" cols="200">{{order_details_info}}{{order_detais_ErrorResponse}}</textarea>
+        <textarea class="form-control rounded-0" name="response" rows="30"
+            cols="200">{{order_details_info}}{{order_detais_ErrorResponse}}</textarea>
+    </div>
+</div>
+<br><br>
+
+<h3>Refund Order</h3>
+<br>
+<div class="row">
+    <div class="col-md-6">
+        <form method="post" action="/v2/refund">
+            <div class="form-group">
+                <label for="json">Refund Order Request</label>
+                <textarea class="form-control rounded-0" name="json" rows="12" cols="200">
+  {
+  "amount": {
+    "value": "1.00",
+    "currency_code": "USD"
+  },
+  "note_to_payer": "Defective product"
+}
+</textarea>
+            </div>
+            <div class="form-group">
+                <label for="planId">Order ID</label>
+                <input type="text" class="form-control rounded-0" name="order_id" value="">
+            </div>
+            <input type="hidden" name="ref" value="as1">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <label for="response">Response</label>
+        <textarea class="form-control rounded-0" name="response" rows="30"
+            cols="200">{{order_refund_details}}{{order_refund_detais_ErrorResponse}}</textarea>
     </div>
 </div>
 <br><br>
